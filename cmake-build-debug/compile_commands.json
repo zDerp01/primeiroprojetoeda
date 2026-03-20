@@ -1,0 +1,14 @@
+[
+{
+  "directory": "C:/Users/afons/CLionProjects/projetoeda/cmake-build-debug",
+  "command": "C:\\PROGRA~1\\JETBRA~1\\CLION2~1.3\\bin\\mingw\\bin\\G__~1.EXE -g -std=gnu++20 -fdiagnostics-color=always -o CMakeFiles\\projetoeda.dir\\main.cpp.obj -c C:\\Users\\afons\\CLionProjects\\projetoeda\\main.cpp",
+  "file": "C:/Users/afons/CLionProjects/projetoeda/main.cpp",
+  "output": "C:/Users/afons/CLionProjects/projetoeda/cmake-build-debug/CMakeFiles/projetoeda.dir/main.cpp.obj"
+},
+{
+  "directory": "C:/Users/afons/CLionProjects/projetoeda/cmake-build-debug",
+  "command": "C:\\PROGRA~1\\JETBRA~1\\CLION2~1.3\\bin\\mingw\\bin\\G__~1.EXE -g -std=gnu++20 -fdiagnostics-color=always -o CMakeFiles\\projetoeda.dir\\plantel.cpp.obj -c C:\\Users\\afons\\CLionProjects\\projetoeda\\plantel.cpp",
+  "file": "C:/Users/afons/CLionProjects/projetoeda/plantel.cpp",
+  "output": "C:/Users/afons/CLionProjects/projetoeda/cmake-build-debug/CMakeFiles/projetoeda.dir/plantel.cpp.obj"
+}
+]
