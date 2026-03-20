@@ -1,20 +1,17 @@
+#include <iomanip>
 #include <iostream>
 #include "plantel.h"
 #include <stdlib.h>
-#include <list>
 #include <time.h>
 
 using namespace std;
 
 int main() {
     srand (time(NULL));
-    list<jogador> jogadores;
-    jogadores = gerarLista(jogadores);
 
+    int numJogadoresSort = 0;
+    jogador* plantel = gerarPlantel(numJogadoresSort,0);
+    mostrarPlantel(plantel, numJogadoresSort);
 
-    for (const auto& j : jogadores) {
-        cout << j.id << " | " << j.nome << " | " << j.pos << " | " << j.num << endl;
-    }
-
-    return 0;
+    system("pause");
 }
