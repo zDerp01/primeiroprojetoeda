@@ -1,5 +1,4 @@
 #include <iostream>
-#include <list>
 #include <string>
 
 using namespace std;
@@ -15,6 +14,5 @@ struct jogador {
     int qualidade;
 };
 
-string* geraNomes(string nomeFicheiro, int &totalNomes);
 jogador* gerarPlantel(int &totalNomes, int numJogadores);
 void mostrarPlantel(jogador* plantel, int numJogadores);

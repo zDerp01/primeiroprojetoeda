@@ -1,7 +1,6 @@
 #include <fstream>
 #include <iostream>
 #include <random>
-#include <algorithm>
 #include "plantel.h"
 
 #include <iomanip>
@@ -42,6 +41,14 @@ jogador* gerarPlantel(int &totalPlantel, int numJogadores) {
     int GR=2, DEF=7, MED=7, AVA=4;
     int extras = numJogadores - 20;
 
+    //for (extras; extras > 0; extras--) {
+        //int sorteio = rand() % 4;
+        //if (sorteio == 0 && GR < 3) GR++;
+        //else if (sorteio == 1 && DEF < 10) DEF++;
+        //else if (sorteio == 2 && MED < 10) MED++;
+        //else if (sorteio == 3 && AVA < 7) AVA++;
+    //}
+
     while (extras > 0) {
         int sorteio = rand() % 4;
         if (sorteio == 0 && GR < 3) { GR++; extras--; }
@@ -80,10 +87,8 @@ jogador* gerarPlantel(int &totalPlantel, int numJogadores) {
 }
 
 void mostrarPlantel(jogador* plantel, int numJogadores) {
-    // Cabeçalho Principal
     cout << "\n***************************** Plantel Disponivel: *****************************" << endl;
 
-    // Cabeçalho das Colunas
     cout << left << setw(26) << "Nome"
          << " | " << setw(4)  << "Num"
          << " | " << setw(7)  << "Posicao"

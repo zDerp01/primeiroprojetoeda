@@ -13,5 +13,7 @@ int main() {
     jogador* plantel = gerarPlantel(numJogadoresSort,0);
     mostrarPlantel(plantel, numJogadoresSort);
 
+    delete[] plantel;
+
     system("pause");
 }
