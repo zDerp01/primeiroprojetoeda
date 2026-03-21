@@ -86,7 +86,50 @@ jogador* gerarPlantel(int &totalPlantel, int numJogadores) {
     return plantel;
 }
 
-void mostrarPlantel(jogador* plantel, int numJogadores) {
+void adicionarJogador(jogador* &lista, int &numJogadores, jogador novoJogador) {
+    jogador* novaLista = new jogador[numJogadores + 1];
+    for (int i = 0; i < numJogadores; i++) {
+        novaLista[i] = lista[i];
+    }
+
+    novaLista[numJogadores] = novoJogador;
+
+    delete[] lista;
+
+    lista = novaLista;
+    numJogadores++;
+}
+
+void removerJogador(jogador* &lista, int &numJogadores, jogador jogadorRemovido) {
+    if (numJogadores != 0 || lista != nullptr) {
+        jogador* novaLista = new jogador[numJogadores - 1];
+        int j = 0;
+        bool encontrou = false;
+        for (int i = 0; i < numJogadores; i++) {
+            if (!encontrou && lista[i].nome == jogadorRemovido.nome && lista[i].num == jogadorRemovido.num) {
+                encontrou = true;
+            }
+            else {
+                if (j < numJogadores - 1) {
+                    novaLista[j] = lista[i];
+                    j++;
+                }
+            }
+        }
+
+        if (!encontrou) {
+            delete[] novaLista;
+            return;
+        }
+
+        delete[] lista;
+
+        lista = novaLista;
+        numJogadores--;
+    }
+}
+
+void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados) {
     cout << "\n***************************** Plantel Disponivel: *****************************" << endl;
 
     cout << left << setw(26) << "Nome"
@@ -119,5 +162,30 @@ void mostrarPlantel(jogador* plantel, int numJogadores) {
              << " | " << plantel[i].dias_treino << endl;
     }
 
+    cout << "-----------------------------------------------------------------------------------------------" << endl;
+
+    cout << "\nLesionados:" << endl;
+
+    if (numLesionados == 0) {
+        cout << "Nao existem jogadores lesionados." << endl;
+    }
+    else {
+        string ultimaPosicaoLesao = "";
+
+        for (int i = 0; i < numLesionados; i++) {
+            if (i > 0 && lesionados[i].pos != ultimaPosicaoLesao) {
+                cout << endl;
+            }
+            ultimaPosicaoLesao = lesionados[i].pos;
+
+            cout << left << setw(26) << lesionados[i].nome
+                 << " | " << setw(4)  << lesionados[i].num
+                 << " | " << setw(7)  << lesionados[i].pos
+                 << " | " << setw(6)  << lesionados[i].idade
+                 << " | " << setw(3)  << lesionados[i].prob_lesao << "%" << setw(8) << ""
+                 << " | " << setw(3)  << lesionados[i].prob_castigo << "%" << setw(9) << ""
+                 << " | " << setw(8)  << lesionados[i].qualidade << endl;
+        }
+    }
     cout << "-----------------------------------------------------------------------------------------------" << endl;
 }
