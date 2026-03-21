@@ -7,6 +7,13 @@
 
 using namespace std;
 
+/**
+* Função que recebe o nome de um ficheiro e referencia o totalNomes (para
+* assim alterar o argumento usado para esse total de nomes), que retorna a lista com todos os nomes do ficheiro.
+* @param nomeFicheiro - string nome do ficheiro.
+* @param totalNomes - referencia que altera o numero de nomes consoantes os do ficheiro.
+* @return - lista com os nomes todos do ficheiros.
+*/
 string* geraNomes(string nomeFicheiro, int &totalNomes) {
     ifstream file(nomeFicheiro);
     string linha;
@@ -31,8 +38,15 @@ string* geraNomes(string nomeFicheiro, int &totalNomes) {
     return nomesEscolhidos;
 }
 
-jogador* gerarPlantel(int &totalPlantel, int numJogadores) {
-    numJogadores = rand() % 11 + 20;
+
+/**
+* Função que recebe o numero total atual de jogadores no plantel que vai ser alterado consoante a geracao feita
+* pelo inteiro local numJogadores e gera um plantel com cada jogador criado com todos os seus atributos preenchidos.
+* @param totalPlantel - inteiro com a variavel que vai conter o numero de jogadores no plantel.
+* @return - plantel.
+*/
+jogador* gerarPlantel(int &totalPlantel) {
+    int numJogadores = rand() % 11 + 20;
 
     int quantNomesNoFicheiro = 0;
 
@@ -86,6 +100,12 @@ jogador* gerarPlantel(int &totalPlantel, int numJogadores) {
     return plantel;
 }
 
+/**
+* Função que recebe uma lista (plantel, suspensos, lesionados ou transferencias) e adiciona um jogador ja existente a essa lista.
+* @param lista - lista em que o jogador vai ser adicionado.
+* @param numJogadores - numero de jogadores dessa lista (que vai ser atualizado).
+* @param novoJogador - o jogador a adicionar.
+*/
 void adicionarJogador(jogador* &lista, int &numJogadores, jogador novoJogador) {
     jogador* novaLista = new jogador[numJogadores + 1];
     for (int i = 0; i < numJogadores; i++) {
@@ -100,6 +120,12 @@ void adicionarJogador(jogador* &lista, int &numJogadores, jogador novoJogador) {
     numJogadores++;
 }
 
+/**
+* Função que recebe uma lista (plantel, suspensos, lesionados ou transferencias) e remove um jogador especifico dessa lista.
+* @param lista - lista em que o jogador vai ser removido.
+* @param numJogadores - numero de jogadores dessa lista (que vai ser atualizado).
+* @param jogadorRemovido - o jogador a remover.
+*/
 void removerJogador(jogador* &lista, int &numJogadores, jogador jogadorRemovido) {
     if (numJogadores != 0 || lista != nullptr) {
         jogador* novaLista = new jogador[numJogadores - 1];
@@ -129,7 +155,18 @@ void removerJogador(jogador* &lista, int &numJogadores, jogador jogadorRemovido)
     }
 }
 
-void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados) {
+/**
+* Função que recebe todas as listas e os seus tamanhos e mostra de forma organizada o plantel.
+* @param plantel - o plantel.
+* @param numJogadores - numero de jogadores do plantel.
+* @param lesionados - a lista de lesionados.
+* @param numLesionados - numero de jogadores lesionados.
+* @param castigados - a lista de castigados.
+* @param numCastigados - numero de jogadores castigados.
+* @param transferencias - a lista de transferencias.
+* @param numTransferencias - numero de jogadores nas transferencias.
+*/
+void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias) {
     cout << "\n***************************** Plantel Disponivel: *****************************" << endl;
 
     cout << left << setw(26) << "Nome"

@@ -11,7 +11,7 @@ int main() {
 
     // cria o plantel inicial
     int numJogadoresSort = 0;
-    jogador* plantel = gerarPlantel(numJogadoresSort,0);
+    jogador* plantel = gerarPlantel(numJogadoresSort);
 
     // cria listas de lesionados, castigados e transferencias
     int numLesionados = 0;
@@ -26,7 +26,7 @@ int main() {
     adicionarJogador(lesionados, numLesionados, plantel[0]);
     removerJogador(plantel, numJogadoresSort, plantel[0]);
 
-    mostrarPlantel(plantel, numJogadoresSort, lesionados, numLesionados);
+    mostrarPlantel(plantel, numJogadoresSort, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias);
 
 
     delete[] plantel;
@@ -34,5 +34,6 @@ int main() {
     delete[] castigados;
     delete[] transferencias;
 
+    //system("cls");
     system("pause");
 }

@@ -14,7 +14,18 @@ struct jogador {
     int qualidade;
 };
 
-jogador* gerarPlantel(int &totalNomes, int numJogadores);
-void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados);
+struct equipa {
+    string nome;
+    string pos;
+    int num;
+    int idade;
+    int prob_castigo;
+    int prob_lesao;
+    int dias_treino;
+    int qualidade;
+};
+
+jogador* gerarPlantel(int &totalNomes);
+void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias);
 void adicionarJogador(jogador* &lista, int &numJogadores, jogador novoJogador);
 void removerJogador(jogador* &lista, int &numJogadores, jogador jogadorRemovido);
