@@ -1,0 +1,3 @@
+"C:\Users\readd\AppData\Local\Programs\CLion 2025.3.2\bin\cmake\win\x64\bin\cmake.exe" -E rm -f CMakeFiles\projetoeda.dir/objects.a
+C:\Users\readd\AppData\Local\Programs\CLION2~1.2\bin\mingw\bin\ar.exe qc CMakeFiles\projetoeda.dir/objects.a @CMakeFiles\projetoeda.dir\objects1.rsp
+C:\Users\readd\AppData\Local\Programs\CLION2~1.2\bin\mingw\bin\G__~1.EXE -g -Wl,--whole-archive CMakeFiles\projetoeda.dir/objects.a -Wl,--no-whole-archive -o projetoeda.exe -Wl,--out-implib,libprojetoeda.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\projetoeda.dir\linkLibs.rsp
