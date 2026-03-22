@@ -24,14 +24,6 @@ int main() {
     int numAdversarios = 17;
     string* adversarios = new string[numAdversarios];
 
-
-    for (int i = 0; i < numAdversarios; i++) {
-        int indice = rand() % totalTodas;
-        adversarios[i] = todasEquipas[indice];
-        // Troca a equipa sorteada pela ultima da lista para nao repetir
-        todasEquipas[indice] = todasEquipas[totalTodas - 1];
-        totalTodas--;
-    }
     delete[] todasEquipas;
     //adicionarJogador(lesionados, numLesionados, plantel[0]);
     //removerJogador(plantel, numJogadoresSort, plantel[0]);

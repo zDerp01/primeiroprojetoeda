@@ -157,51 +157,7 @@ void removerJogador(jogador* &lista, int &numJogadores, jogador jogadorRemovido)
         numJogadores--;
     }
 }
-//mudei essas linhas ate a 183 para fazer o campeonato
-void passarJornada(string* adversarios, int numAdversarios) {
-    system("cls");
 
-
-    if (numJornada > 34) {
-        cout << "========================================" << endl;
-        cout << "      Campeonato acabou            " << endl;
-        cout << "========================================" << endl;
-        system("pause");
-        return;
-    }
-
-    //  (repete a lista na 2ª volta)
-    int indiceAdversario = (numJornada - 1) % 17;
-
-    // Define se é Casa (1ª volta) ou Fora (2ª volta)
-    string local = (numJornada <= 17) ? "(CASA)" : "(FORA)";
-
-    cout << "=====================================================" << endl;
-    cout << "            JORNADA " << numJornada << endl;
-    
-    // Simular resultado
-    int golosEDA = rand() % 5;
-    int golosAdv = rand() % 5;
-    
-    cout << "            EDA FC " << golosEDA << " - " << golosAdv << " " << adversarios[indiceAdversario] << endl;
-    cout << "            " << local << endl;
-
-    if (golosEDA > golosAdv) {
-        pontosEDA += 3;
-        cout << "            VITORIA! (+3 pontos)" << endl;
-    } else if (golosEDA == golosAdv) {
-        pontosEDA += 1;
-        cout << "            EMPATE! (+1 ponto)" << endl;
-    } else {
-        cout << "            DERROTA! (+0 pontos)" << endl;
-    }
-    cout << "            Total Pontos: " << pontosEDA << endl;
-    
-    cout << "=====================================================" << endl;
-
-    numJornada++;
-    system("pause");
-}
 
 void treinarJogador(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios, bool aposJornada){
     char opcTreino;
