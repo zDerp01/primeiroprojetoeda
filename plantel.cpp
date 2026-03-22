@@ -7,7 +7,7 @@
 
 using namespace std;
 
-int numJornada=1;
+int numJornada=1, numPontos=0;
 
 /**
 * Função que recebe o nome de um ficheiro e referencia o totalNomes (para
@@ -157,9 +157,12 @@ void removerJogador(jogador* &lista, int &numJogadores, jogador jogadorRemovido)
     }
 }
 
-void passarJornada(string* adversarios, int numAdversarios) {
+void passarJornada(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios) {
     system("cls");
-    //numJornada++;
+
+    int totalGolos = rand() % 9;
+    int resultadoEquipaA = (totalGolos == 0) ? 0 : rand() % (totalGolos + 1); // Eda
+    int resultadoEquipaB = totalGolos - resultadoEquipaA;
     string nomeAdversario = adversarios[rand() % numAdversarios];
 
     cout << "=====================================================" << endl;
@@ -168,10 +171,162 @@ void passarJornada(string* adversarios, int numAdversarios) {
     cout << "=====================================================" << endl;
 
     system("pause");
+    system("cls");
 
-    //cout << "************************************" << endl;
-    //cout << "* EDA FC - " << numJornada << "a Jornada - " << "(num pontos)" << " pontos. *" << endl;
-    //cout << "************************************" << endl;
+    jogador* titulares = new jogador[11];
+    jogador* suplentes = new jogador[6];
+    bool escolhido[100] = {false}; // array pa marcar quem já foi selecionado (assumindo max 100 jogadores)
+
+    string posicoes[4] = {"GR", "DEF", "MED", "AVA"};
+    int limiteTitulares[4] = {1, 4, 4, 2};
+    int locTitulares = 0;
+
+    // pa escolher os titulares
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < limiteTitulares[i]; j++) {
+            int maxQualidade = -1;
+            int ind = -1;
+
+            for (int k = 0; k < numJogadores; k++) {
+                if (!escolhido[k] && plantel[k].pos == posicoes[i] && plantel[k].qualidade > maxQualidade) {
+                    maxQualidade = plantel[k].qualidade;
+                    ind = k;
+                }
+            }
+            if (ind != -1) {
+                titulares[locTitulares++] = plantel[ind];
+                escolhido[ind] = true;
+            }
+        }
+    }
+
+    // pa escolher suplentes
+    int limiteSuplentes[4] = {1, 2, 2, 1};
+    int locSuplentes = 0;
+
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < limiteSuplentes[i]; j++) {
+            int maxQualidade = -1;
+            int ind = -1;
+
+            for (int k = 0; k < numJogadores; k++) {
+                if (!escolhido[k] && plantel[k].pos == posicoes[i] && plantel[k].qualidade > maxQualidade) {
+                    maxQualidade = plantel[k].qualidade;
+                    ind = k;
+                }
+            }
+            if (ind != -1) {
+                suplentes[locSuplentes++] = plantel[ind];
+                escolhido[ind] = true;
+            }
+        }
+    }
+
+    // ------------------------------
+
+    if (resultadoEquipaA == resultadoEquipaB) numPontos++;
+    else if (resultadoEquipaA > resultadoEquipaB) numPontos+=3;
+
+    cout << "************************************" << endl;
+    cout << "* EDA FC - " << numJornada << "a Jornada - " << numPontos << " pontos. *" << endl;
+    cout << "************************************" << endl;
+
+    cout << "Resultado Anterior" << endl;
+    cout << "Resultado : EDA FC:" << resultadoEquipaA << " - " << nomeAdversario << ":" << resultadoEquipaB << endl;
+
+    cout << "\n11 Inicial" << endl;
+    cout << left << setw(26) << "Nome"
+         << " | " << setw(2)  << "Num"
+         << " | " << setw(7)  << "Posicao"
+         << " | " << setw(5)  << "Idade"
+         << " | " << setw(9)  << "ProbLesao"
+         << " | " << setw(11) << "ProbCastigo"
+         << " | " << "Qualidade" << endl;
+    cout << "-----------------------------------------------------------------------------------------------" << endl;
+
+    for (int i = 0; i < locTitulares; i++) {
+        cout << left << setw(26) << titulares[i].nome
+             << " | " << setw(2)  << titulares[i].num
+             << " | " << setw(7)  << titulares[i].pos
+             << " | " << setw(5)  << titulares[i].idade
+             << " | " << setw(8)  << titulares[i].prob_lesao << "%"
+             << " | " << setw(10) << titulares[i].prob_castigo << "%"
+             << " | " << titulares[i].qualidade << endl;
+    }
+
+    cout << "\nSuplentes:" << endl;
+    cout << left << setw(26) << "Nome"
+         << " | " << setw(2)  << "Num"
+         << " | " << setw(7)  << "Posicao"
+         << " | " << setw(5)  << "Idade"
+         << " | " << setw(9)  << "ProbLesao"
+         << " | " << setw(11) << "ProbCastigo"
+         << " | " << "Qualidade" << endl;
+    cout << "-----------------------------------------------------------------------------------------------" << endl;
+
+    for (int i = 0; i < locSuplentes; i++) {
+        cout << left << setw(26) << suplentes[i].nome
+             << " | " << setw(2)  << suplentes[i].num
+             << " | " << setw(7)  << suplentes[i].pos
+             << " | " << setw(5)  << suplentes[i].idade
+             << " | " << setw(8)  << suplentes[i].prob_lesao << "%"
+             << " | " << setw(10) << suplentes[i].prob_castigo << "%"
+             << " | " << suplentes[i].qualidade << endl;
+    }
+
+    cout << "\nCastigados:" << endl;
+    cout << left << setw(26) << "Nome"
+         << " | " << setw(2)  << "Num"
+         << " | " << setw(7)  << "Posicao"
+         << " | " << setw(5)  << "Idade"
+         << " | " << setw(9)  << "ProbLesao"
+         << " | " << setw(11) << "ProbCastigo"
+         << " | " << setw(9)  << "Qualidade"
+         << " | JogosCastigo" << endl;
+    cout << "--------------------------------------------------------------------------------------------------------------" << endl;
+
+    for (int i = 0; i < numCastigados; i++) {
+        cout << left << setw(26) << castigados[i].nome
+             << " | " << setw(2)  << castigados[i].num
+             << " | " << setw(7)  << castigados[i].pos
+             << " | " << setw(5)  << castigados[i].idade
+             << " | " << setw(8)  << castigados[i].prob_lesao << "%"
+             << " | " << setw(10) << castigados[i].prob_castigo << "%"
+             << " | " << setw(9)  << castigados[i].qualidade
+             << " | " << castigados[i].dias_treino << endl;
+    }
+
+    cout << "\nLesionados:" << endl;
+    cout << left << setw(26) << "Nome"
+         << " | " << setw(2)  << "Num"
+         << " | " << setw(7)  << "Posicao"
+         << " | " << setw(5)  << "Idade"
+         << " | " << setw(9)  << "ProbLesao"
+         << " | " << setw(11) << "ProbCastigo"
+         << " | " << setw(9)  << "Qualidade"
+         << " | JogosLesao" << endl;
+    cout << "--------------------------------------------------------------------------------------------------------------" << endl;
+
+    for (int i = 0; i < numLesionados; i++) {
+        cout << left << setw(26) << lesionados[i].nome
+             << " | " << setw(2)  << lesionados[i].num
+             << " | " << setw(7)  << lesionados[i].pos
+             << " | " << setw(5)  << lesionados[i].idade
+             << " | " << setw(8)  << lesionados[i].prob_lesao << "%"
+             << " | " << setw(10) << lesionados[i].prob_castigo << "%"
+             << " | " << setw(9)  << lesionados[i].qualidade
+             << " | " << lesionados[i].dias_treino << endl;
+    }
+
+    cout << "\nSubstituicoes:" << endl;
+    cout << "Sem substituicoes registadas." << endl;
+    cout << "*************************************************************************" << endl;
+    numJornada++;
+    system("pause");
+    system("cls");
+
+    mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, false);
+    exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, false);
 }
 
 void treinarJogador(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios, bool aposJornada){
@@ -203,7 +358,7 @@ void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int num
     switch (opc) {
         case 'S':
         case 's':
-            passarJornada(adversarios, numAdversarios);
+            passarJornada(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
             break;
 
         case 'O':
@@ -240,7 +395,7 @@ void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int num
 void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, bool aposJornada) {
     if (!aposJornada) {
         cout << "************************************" << endl;
-        cout << "* EDA FC - " << numJornada << "a Jornada - " << "(num pontos)" << " pontos. *" << endl;
+        cout << "* EDA FC - " << numJornada << "a Jornada - " << numPontos << " pontos. *" << endl;
         cout << "************************************" << endl;
     }
 
@@ -269,8 +424,8 @@ void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int
              << " | " << setw(4)  << plantel[i].num
              << " | " << setw(7)  << plantel[i].pos
              << " | " << setw(6)  << plantel[i].idade
-             << " | " << setw(3)  << plantel[i].prob_lesao << "%" << setw(8) << ""
-             << " | " << setw(3)  << plantel[i].prob_castigo << "%" << setw(9) << ""
+             << " | " << setw(11)  << plantel[i].prob_lesao << "%"
+             << " | " << setw(12)  << plantel[i].prob_castigo << "%"
              << " | " << setw(9)  << plantel[i].qualidade
              << " | " << plantel[i].dias_treino << endl;
     }
@@ -306,8 +461,8 @@ void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int
                  << " | " << setw(4)  << lesionados[i].num
                  << " | " << setw(7)  << lesionados[i].pos
                  << " | " << setw(6)  << lesionados[i].idade
-                 << " | " << setw(3)  << lesionados[i].prob_lesao << "%" << setw(8) << ""
-                 << " | " << setw(3)  << lesionados[i].prob_castigo << "%" << setw(9) << ""
+                 << " | " << setw(11)  << lesionados[i].prob_lesao << "%"
+                 << " | " << setw(12)  << lesionados[i].prob_castigo << "%"
                  << " | " << setw(9)  << lesionados[i].qualidade << endl;
         }
     }
@@ -342,8 +497,8 @@ void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int
                  << " | " << setw(4)  << castigados[i].num
                  << " | " << setw(7)  << castigados[i].pos
                  << " | " << setw(6)  << castigados[i].idade
-                 << " | " << setw(3)  << castigados[i].prob_lesao << "%" << setw(8) << ""
-                 << " | " << setw(3)  << castigados[i].prob_castigo << "%" << setw(9) << ""
+                 << " | " << setw(11)  << castigados[i].prob_lesao << "%"
+                 << " | " << setw(12)  << castigados[i].prob_castigo << "%"
                  << " | " << setw(9)  << castigados[i].qualidade << endl;
         }
     }
@@ -377,8 +532,8 @@ void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int
                  << " | " << setw(4)  << transferencias[i].num
                  << " | " << setw(7)  << transferencias[i].pos
                  << " | " << setw(6)  << transferencias[i].idade
-                 << " | " << setw(3)  << transferencias[i].prob_lesao << "%" << setw(8) << ""
-                 << " | " << setw(3)  << transferencias[i].prob_castigo << "%" << setw(9) << ""
+                 << " | " << setw(11)  << transferencias[i].prob_lesao << "%"
+                 << " | " << setw(12)  << transferencias[i].prob_castigo << "%"
                  << " | " << setw(9)  << transferencias[i].qualidade << endl;
         }
     }

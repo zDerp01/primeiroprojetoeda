@@ -35,5 +35,5 @@ int main() {
     delete[] adversarios;
 
     //system("cls");
-    system("pause");
+    //system("pause");
 }

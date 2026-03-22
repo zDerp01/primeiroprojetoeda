@@ -22,7 +22,7 @@ string* geraNomes(string nomeFicheiro, int &totalNomes);
 jogador* gerarPlantel(int &totalNomes);
 void adicionarJogador(jogador* &lista, int &numJogadores, jogador novoJogador);
 void removerJogador(jogador* &lista, int &numJogadores, jogador jogadorRemovido);
-void passarJornada(string* adversarios, int numAdversarios);
+void passarJornada(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios);
 void treinarJogador(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios, bool aposJornada);
 void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios, bool aposJornada);
 void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, bool aposJornada);
