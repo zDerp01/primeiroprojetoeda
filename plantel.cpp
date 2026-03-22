@@ -168,6 +168,25 @@ void passarJornada(string* adversarios, int numAdversarios) {
     // trabalha joao rodrigo sff
 }
 
+void treinarJogador(){
+    char opcTreino;
+    system("cls");
+    cout << "1-Mudar a posição de um jogador:" << endl;
+    cout << "2-Melhorar a qualidade de um jogador:" << endl;
+    switch (opcTreino) {
+        case '1':
+
+            break;
+
+        case '2':
+            break;
+
+        default :
+            cout <<"Comando inválido!";
+            break;
+    }
+}
+
 void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios, bool aposJornada) {
     char opc;
 
@@ -183,7 +202,7 @@ void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int num
 
         case 'O':
         case 'o':
-            cout << endl << "Menu a ser feito!" << endl;
+            treinarJogador();
             system("pause");
             system("cls");
             mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, aposJornada);
@@ -211,6 +230,7 @@ void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int num
 * @param transferencias - a lista de transferencias.
 * @param numTransferencias - numero de jogadores nas transferencias.
 */
+
 void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, bool aposJornada) {
     if (!aposJornada) {
         cout << "************************************" << endl;

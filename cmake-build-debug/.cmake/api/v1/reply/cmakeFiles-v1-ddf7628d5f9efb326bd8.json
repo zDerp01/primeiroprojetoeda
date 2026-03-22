@@ -21,6 +21,11 @@
 		{
 			"isCMake" : true,
 			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2025.3.3/bin/cmake/win/x64/share/cmake-4.1/Modules/CMakeMinGWFindMake.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
 			"path" : "C:/Program Files/JetBrains/CLion 2025.3.3/bin/cmake/win/x64/share/cmake-4.1/Modules/CMakeSystemSpecificInitialize.cmake"
 		},
 		{
@@ -867,11 +872,6 @@
 		{
 			"isCMake" : true,
 			"isExternal" : true,
-			"path" : "C:/Program Files/JetBrains/CLion 2025.3.3/bin/cmake/win/x64/share/cmake-4.1/Modules/Compiler/GNU-CXX-CXXImportStd.cmake"
-		},
-		{
-			"isCMake" : true,
-			"isExternal" : true,
 			"path" : "C:/Program Files/JetBrains/CLion 2025.3.3/bin/cmake/win/x64/share/cmake-4.1/Modules/CMakeCXXCompiler.cmake.in"
 		},
 		{
@@ -927,8 +927,8 @@
 	"kind" : "cmakeFiles",
 	"paths" : 
 	{
-		"build" : "C:/Users/afons/Documents/GitHub/primeiroprojetoeda/cmake-build-debug",
-		"source" : "C:/Users/afons/Documents/GitHub/primeiroprojetoeda"
+		"build" : "C:/Users/cisco/Documents/GitHub/primeiroprojetoeda/cmake-build-debug",
+		"source" : "C:/Users/cisco/Documents/GitHub/primeiroprojetoeda"
 	},
 	"version" : 
 	{
