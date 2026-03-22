@@ -7,6 +7,8 @@
 
 using namespace std;
 
+int numJornada=1;
+
 /**
 * Função que recebe o nome de um ficheiro e referencia o totalNomes (para
 * assim alterar o argumento usado para esse total de nomes), que retorna a lista com todos os nomes do ficheiro.
@@ -157,7 +159,42 @@ void removerJogador(jogador* &lista, int &numJogadores, jogador jogadorRemovido)
 
 void passarJornada() {
     system("cls");
+    numJornada++;
+    
+
     // trabalha joao rodrigo sff
+}
+
+void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias) {
+    char opc;
+
+    cout << "===========================================================================================" << endl;
+    cout << "Pressione [S] + [ENTER] para avancar uma jornada ou [O] + [ENTER] para aceder ao menu de gestao do plantel." << endl << endl << ">>> ";
+    cin >> opc;
+
+    switch (opc) {
+        case 'S':
+        case 's':
+            passarJornada();
+            break;
+
+        case 'O':
+        case 'o':
+            cout << endl << "Menu a ser feito!" << endl;
+            system("pause");
+            system("cls");
+            mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias);
+            exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias);
+            break;
+
+        default :
+            cout << endl << "Operacao invalida!" << endl;
+            system("pause");
+            system("cls");
+            mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias);
+            exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias);
+            break;
+    }
 }
 
 /**
@@ -173,7 +210,7 @@ void passarJornada() {
 */
 void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias) {
     cout << "************************************" << endl;
-    cout << "* EDA FC - " << "(num jornada)" << "a Jornada - " << "(num pontos)" << " pontos. *" << endl;
+    cout << "* EDA FC - " << numJornada << "a Jornada - " << "(num pontos)" << " pontos. *" << endl;
     cout << "************************************" << endl;
     cout << "\n***************************** Plantel Disponivel: *****************************" << endl;
 
