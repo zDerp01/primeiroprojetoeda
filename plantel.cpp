@@ -159,23 +159,25 @@ void removerJogador(jogador* &lista, int &numJogadores, jogador jogadorRemovido)
 
 void passarJornada(string* adversarios, int numAdversarios) {
     system("cls");
-    numJornada++;
-    cout << "=====================================================" << endl;
-    cout << setw(5) << "EDA FC - " << adversarios[rand() % numAdversarios] << endl;
-    cout << "=====================================================" << endl;
-    system("pause");
+    //numJornada++;
+    string nomeAdversario = adversarios[rand() % numAdversarios];
 
-    // trabalha joao rodrigo sff
+    cout << "=====================================================" << endl;
+    cout << "            JORNADA " << numJornada << endl;
+    cout << "            EDA FC vs " << nomeAdversario << endl;
+    cout << "=====================================================" << endl;
+
+    //system("pause");
 }
 
-void treinarJogador(){
+void treinarJogador(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios, bool aposJornada){
     char opcTreino;
     system("cls");
     cout << "1-Mudar a posição de um jogador:" << endl;
     cout << "2-Melhorar a qualidade de um jogador:" << endl;
     switch (opcTreino) {
         case '1':
-
+            mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, aposJornada);
             break;
 
         case '2':
@@ -202,7 +204,7 @@ void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int num
 
         case 'O':
         case 'o':
-            treinarJogador();
+            treinarJogador(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, aposJornada);
             system("pause");
             system("cls");
             mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, aposJornada);
