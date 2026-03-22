@@ -19,6 +19,7 @@ struct equipa {
 };
 
 jogador* gerarPlantel(int &totalNomes);
-void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias);
 void adicionarJogador(jogador* &lista, int &numJogadores, jogador novoJogador);
 void removerJogador(jogador* &lista, int &numJogadores, jogador jogadorRemovido);
+void passarJornada();
+void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias);
