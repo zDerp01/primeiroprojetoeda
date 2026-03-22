@@ -167,7 +167,13 @@ void passarJornada(string* adversarios, int numAdversarios) {
     cout << "            EDA FC vs " << nomeAdversario << endl;
     cout << "=====================================================" << endl;
 
-    //system("pause");
+    system("pause");
+
+    cout << "************************************" << endl;
+    cout << "* EDA FC - " << numJornada << "a Jornada - " << "(num pontos)" << " pontos. *" << endl;
+    cout << "************************************" << endl;
+
+
 }
 
 void treinarJogador(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios, bool aposJornada){
@@ -344,6 +350,7 @@ void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int
         }
     }
     cout << "-----------------------------------------------------------------------------------------------" << endl;
+    cout << "****************************************************************************" << endl;
     cout << "\nTransferencias:" << endl;
 
     cout << left << setw(26) << "Nome"
@@ -377,6 +384,5 @@ void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int
                  << " | " << setw(9)  << transferencias[i].qualidade << endl;
         }
     }
-    cout << "-----------------------------------------------------------------------------------------------" << endl;
-    cout << "****************************************************************************" << endl;
+    cout << "-----------------------------------------------------------------------------------------------" << endl << endl;
 }
