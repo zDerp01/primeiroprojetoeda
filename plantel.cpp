@@ -157,15 +157,18 @@ void removerJogador(jogador* &lista, int &numJogadores, jogador jogadorRemovido)
     }
 }
 
-void passarJornada() {
+void passarJornada(string* adversarios, int numAdversarios) {
     system("cls");
     numJornada++;
-    
+    cout << "=====================================================" << endl;
+    cout << setw(5) << "EDA FC - " << adversarios[rand() % numAdversarios] << endl;
+    cout << "=====================================================" << endl;
+    system("pause");
 
     // trabalha joao rodrigo sff
 }
 
-void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias) {
+void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios, bool aposJornada) {
     char opc;
 
     cout << "===========================================================================================" << endl;
@@ -175,7 +178,7 @@ void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int num
     switch (opc) {
         case 'S':
         case 's':
-            passarJornada();
+            passarJornada(adversarios, numAdversarios);
             break;
 
         case 'O':
@@ -183,16 +186,16 @@ void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int num
             cout << endl << "Menu a ser feito!" << endl;
             system("pause");
             system("cls");
-            mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias);
-            exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias);
+            mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, aposJornada);
+            exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, aposJornada);
             break;
 
         default :
             cout << endl << "Operacao invalida!" << endl;
             system("pause");
             system("cls");
-            mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias);
-            exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias);
+            mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, aposJornada);
+            exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, aposJornada);
             break;
     }
 }
@@ -208,12 +211,14 @@ void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int num
 * @param transferencias - a lista de transferencias.
 * @param numTransferencias - numero de jogadores nas transferencias.
 */
-void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias) {
-    cout << "************************************" << endl;
-    cout << "* EDA FC - " << numJornada << "a Jornada - " << "(num pontos)" << " pontos. *" << endl;
-    cout << "************************************" << endl;
-    cout << "\n***************************** Plantel Disponivel: *****************************" << endl;
+void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, bool aposJornada) {
+    if (!aposJornada) {
+        cout << "************************************" << endl;
+        cout << "* EDA FC - " << numJornada << "a Jornada - " << "(num pontos)" << " pontos. *" << endl;
+        cout << "************************************" << endl;
+    }
 
+    cout << "\n***************************** Plantel Disponivel: *****************************" << endl;
     cout << left << setw(26) << "Nome"
          << " | " << setw(4)  << "Num"
          << " | " << setw(7)  << "Posicao"
@@ -301,7 +306,7 @@ void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int
     else {
         string ultimaPosicaoCastigo = "";
 
-        for (int i = 0; i < numLesionados; i++) {
+        for (int i = 0; i < numCastigados; i++) {
             if (i > 0 && castigados[i].pos != ultimaPosicaoCastigo) {
                 cout << endl;
             }
@@ -317,4 +322,39 @@ void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int
         }
     }
     cout << "-----------------------------------------------------------------------------------------------" << endl;
+    cout << "\nTransferencias:" << endl;
+
+    cout << left << setw(26) << "Nome"
+         << " | " << setw(4)  << "Num"
+         << " | " << setw(7)  << "Posicao"
+         << " | " << setw(6)  << "Idade"
+         << " | " << setw(12) << "ProbLesao"
+         << " | " << setw(13) << "ProbCastigo"
+         << " | " << setw(8)  << "Qualidade" << endl;
+
+    cout << "-----------------------------------------------------------------------------------------------" << endl;
+
+    if (numTransferencias == 0) {
+        cout << "Nao existem transferencias." << endl;
+    }
+    else {
+        string ultimaPosicaoTransferencias = "";
+
+        for (int i = 0; i < numTransferencias; i++) {
+            if (i > 0 && transferencias[i].pos != ultimaPosicaoTransferencias) {
+                cout << endl;
+            }
+            ultimaPosicaoTransferencias = transferencias[i].pos;
+
+            cout << left << setw(26) << transferencias[i].nome
+                 << " | " << setw(4)  << transferencias[i].num
+                 << " | " << setw(7)  << transferencias[i].pos
+                 << " | " << setw(6)  << transferencias[i].idade
+                 << " | " << setw(3)  << transferencias[i].prob_lesao << "%" << setw(8) << ""
+                 << " | " << setw(3)  << transferencias[i].prob_castigo << "%" << setw(9) << ""
+                 << " | " << setw(9)  << transferencias[i].qualidade << endl;
+        }
+    }
+    cout << "-----------------------------------------------------------------------------------------------" << endl;
+    cout << "****************************************************************************" << endl;
 }
