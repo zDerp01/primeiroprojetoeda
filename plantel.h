@@ -15,14 +15,7 @@ struct jogador {
 };
 
 struct equipa {
-    string nome;
-    string pos;
-    int num;
-    int idade;
-    int prob_castigo;
-    int prob_lesao;
-    int dias_treino;
-    int qualidade;
+
 };
 
 jogador* gerarPlantel(int &totalNomes);
