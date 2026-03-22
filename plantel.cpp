@@ -159,13 +159,15 @@ void removerJogador(jogador* &lista, int &numJogadores, jogador jogadorRemovido)
 
 void passarJornada(string* adversarios, int numAdversarios) {
     system("cls");
-    numJornada++;
-    cout << "=====================================================" << endl;
-    cout << setw(5) << "EDA FC - " << adversarios[rand() % numAdversarios] << endl;
-    cout << "=====================================================" << endl;
-    system("pause");
+    //numJornada++;
+    string nomeAdversario = adversarios[rand() % numAdversarios];
 
-    // trabalha joao rodrigo sff
+    cout << "=====================================================" << endl;
+    cout << "            JORNADA " << numJornada << endl;
+    cout << "            EDA FC vs " << nomeAdversario << endl;
+    cout << "=====================================================" << endl;
+
+    //system("pause");
 }
 
 void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios, bool aposJornada) {
