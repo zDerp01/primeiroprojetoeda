@@ -169,11 +169,9 @@ void passarJornada(string* adversarios, int numAdversarios) {
 
     system("pause");
 
-    cout << "************************************" << endl;
-    cout << "* EDA FC - " << numJornada << "a Jornada - " << "(num pontos)" << " pontos. *" << endl;
-    cout << "************************************" << endl;
-
-
+    //cout << "************************************" << endl;
+    //cout << "* EDA FC - " << numJornada << "a Jornada - " << "(num pontos)" << " pontos. *" << endl;
+    //cout << "************************************" << endl;
 }
 
 void treinarJogador(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios, bool aposJornada){
