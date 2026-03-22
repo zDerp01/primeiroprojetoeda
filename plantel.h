@@ -15,7 +15,7 @@ struct jogador {
 };
 
 struct equipa {
-
+    string nome;
 };
 
 jogador* gerarPlantel(int &totalNomes);
