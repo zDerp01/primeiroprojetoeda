@@ -18,13 +18,10 @@ int main() {
     jogador* castigados = nullptr;
     int numTransferencias = 0;
     jogador* transferencias = nullptr;
-    int totalTodas = 0;
-    string* todasEquipas = geraNomes("equipas.txt", totalTodas);
+    int numAdversarios = 0;
+    string* adversarios = geraNomes("equipas.txt", numAdversarios);
 
-    int numAdversarios = 17;
-    string* adversarios = new string[numAdversarios];
 
-    delete[] todasEquipas;
     //adicionarJogador(lesionados, numLesionados, plantel[0]);
     //removerJogador(plantel, numJogadoresSort, plantel[0]);
 

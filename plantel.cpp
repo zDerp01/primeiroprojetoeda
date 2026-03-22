@@ -8,7 +8,6 @@
 using namespace std;
 
 int numJornada=1;
-int pontosEDA = 0; // Variavel global para os pontos
 
 /**
 * Função que recebe o nome de um ficheiro e referencia o totalNomes (para
@@ -158,6 +157,22 @@ void removerJogador(jogador* &lista, int &numJogadores, jogador jogadorRemovido)
     }
 }
 
+void passarJornada(string* adversarios, int numAdversarios) {
+    system("cls");
+    //numJornada++;
+    string nomeAdversario = adversarios[rand() % numAdversarios];
+
+    cout << "=====================================================" << endl;
+    cout << "            JORNADA " << numJornada << endl;
+    cout << "            EDA FC vs " << nomeAdversario << endl;
+    cout << "=====================================================" << endl;
+
+    system("pause");
+
+    //cout << "************************************" << endl;
+    //cout << "* EDA FC - " << numJornada << "a Jornada - " << "(num pontos)" << " pontos. *" << endl;
+    //cout << "************************************" << endl;
+}
 
 void treinarJogador(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios, bool aposJornada){
     char opcTreino;
@@ -189,8 +204,6 @@ void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int num
         case 'S':
         case 's':
             passarJornada(adversarios, numAdversarios);
-            mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, true);
-            exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, true);
             break;
 
         case 'O':
@@ -227,7 +240,7 @@ void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int num
 void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, bool aposJornada) {
     if (!aposJornada) {
         cout << "************************************" << endl;
-        cout << "* EDA FC - " << numJornada << "a Jornada - " << pontosEDA << " pontos. *" << endl;
+        cout << "* EDA FC - " << numJornada << "a Jornada - " << "(num pontos)" << " pontos. *" << endl;
         cout << "************************************" << endl;
     }
 
