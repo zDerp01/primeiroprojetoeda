@@ -1,3 +1,0 @@
-C:/Users/afons/Documents/GitHub/primeiroprojetoeda/cmake-build-debug/CMakeFiles/projetoeda.dir
-C:/Users/afons/Documents/GitHub/primeiroprojetoeda/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/afons/Documents/GitHub/primeiroprojetoeda/cmake-build-debug/CMakeFiles/rebuild_cache.dir
