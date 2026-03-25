@@ -1,0 +1,103 @@
+# =========================
+# Unity Folders
+# =========================
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+
+# Memory Captures
+/[Mm]emoryCaptures/
+
+# Recordings
+/[Rr]ecordings/
+
+# Asset Store Tools (optional)
+# /[Aa]ssets/AssetStoreTools*
+
+# JetBrains Rider plugin
+/[Aa]ssets/Plugins/Editor/JetBrains*
+
+# =========================
+# IDEs
+# =========================
+
+# Visual Studio
+.vs/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# VS Code
+.vscode/
+
+# CLion / IntelliJ
+.idea/
+
+# =========================
+# CMake / CLion Builds
+# =========================
+cmake-build-*/
+[Cc][Mm]ake[Bb]uild*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# =========================
+# Unity Generated Meta (debugging artifacts)
+# =========================
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# Crash reports
+sysinfo.txt
+
+# =========================
+# Builds
+# =========================
+*.apk
+*.aab
+*.app
+*.unitypackage
+*.unitypackage.meta
+
+# Crashlytics
+crashlytics-build.properties
+
+# =========================
+# Addressables
+# =========================
+/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
+
+# Temporary auto-generated Android Assets
+/[Aa]ssets/[Ss]treamingAssets/aa.meta
+/[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# =========================
+# OS Files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# IMPORTANT (do NOT ignore)
+# =========================
+#! Assets/
+#! ProjectSettings/
+#! Packages/
