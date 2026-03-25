@@ -157,13 +157,22 @@ void removerJogador(jogador* &lista, int &numJogadores, jogador jogadorRemovido)
     }
 }
 
-void passarJornada(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios) {
+void passarJornada(jogador* &plantel, int &numJogadores, jogador* &lesionados, int &numLesionados, jogador* &castigados, int &numCastigados, jogador* &transferencias, int &numTransferencias, string* adversarios, int numAdversarios, int* jogosAdversario) {
     system("cls");
 
     int totalGolos = rand() % 9;
     int resultadoEquipaA = (totalGolos == 0) ? 0 : rand() % (totalGolos + 1); // Eda
     int resultadoEquipaB = totalGolos - resultadoEquipaA;
-    string nomeAdversario = adversarios[rand() % numAdversarios];
+    int indiceAdversario = 0;
+    int jogosSorteado = 0;
+
+    do {
+        indiceAdversario = rand() % numAdversarios;
+        jogosSorteado = jogosAdversario[indiceAdversario];
+    } while (jogosSorteado >= 2);
+
+    jogosAdversario[indiceAdversario]++;
+    string nomeAdversario = adversarios[indiceAdversario];
 
     cout << "=====================================================" << endl;
     cout << "            JORNADA " << numJornada << endl;
@@ -219,6 +228,51 @@ void passarJornada(jogador* plantel, int numJogadores, jogador* lesionados, int 
                 suplentes[locSuplentes++] = plantel[ind];
                 escolhido[ind] = true;
             }
+        }
+    }
+
+    // ----- lesoes e substituicoes -----
+    int substituicoesFeitas = 0;
+    string substituicoesTexto[3];
+
+    for (int i = 0; i < locTitulares; i++) {
+        if (rand() % 100 < titulares[i].prob_lesao) {
+            titulares[i].dias_treino = rand() % 10 + 1;
+
+            if (substituicoesFeitas < 3) {
+                int idxSup = -1;
+                for (int s = 0; s < locSuplentes; s++) {
+                    if (suplentes[s].pos == titulares[i].pos) { idxSup = s; break; }
+                }
+                if (idxSup == -1 && locSuplentes > 0) idxSup = 0;
+
+                if (idxSup != -1) {
+                    substituicoesTexto[substituicoesFeitas++] = titulares[i].nome + " -> " + suplentes[idxSup].nome;
+                    jogador suplenteSelecionado = suplentes[idxSup];
+                    for (int s = idxSup; s < locSuplentes - 1; s++) suplentes[s] = suplentes[s + 1];
+                    locSuplentes--;
+                    adicionarJogador(lesionados, numLesionados, titulares[i]);
+                    removerJogador(plantel, numJogadores, titulares[i]);
+                    titulares[i] = suplenteSelecionado;
+                } else {
+                    cout << "AVISO: " << titulares[i].nome << " lesionou-se e nao ha suplentes disponiveis." << endl;
+                    adicionarJogador(lesionados, numLesionados, titulares[i]);
+                    removerJogador(plantel, numJogadores, titulares[i]);
+                }
+            } else {
+                cout << "AVISO: " << titulares[i].nome << " lesionou-se apos o limite de substituicoes." << endl;
+                adicionarJogador(lesionados, numLesionados, titulares[i]);
+                removerJogador(plantel, numJogadores, titulares[i]);
+            }
+        }
+    }
+
+    // ----- castigos -----
+    for (int i = 0; i < locTitulares; i++) {
+        if (rand() % 100 < titulares[i].prob_castigo) {
+            titulares[i].dias_treino = rand() % 10 + 1;
+            adicionarJogador(castigados, numCastigados, titulares[i]);
+            removerJogador(plantel, numJogadores, titulares[i]);
         }
     }
 
@@ -319,17 +373,66 @@ void passarJornada(jogador* plantel, int numJogadores, jogador* lesionados, int 
     }
 
     cout << "\nSubstituicoes:" << endl;
-    cout << "Sem substituicoes registadas." << endl;
+    if (substituicoesFeitas == 0) {
+        cout << "Sem substituicoes nesta jornada." << endl;
+    } else {
+        for (int i = 0; i < substituicoesFeitas; i++) {
+            cout << "  " << substituicoesTexto[i] << endl;
+        }
+    }
+
+    // ----- decrementar contadores e devolver ao plantel -----
+    for (int i = numLesionados - 1; i >= 0; i--) {
+        lesionados[i].dias_treino--;
+        if (lesionados[i].dias_treino <= 0) {
+            lesionados[i].dias_treino = 0;
+            adicionarJogador(plantel, numJogadores, lesionados[i]);
+            removerJogador(lesionados, numLesionados, lesionados[i]);
+        }
+    }
+
+    for (int i = numCastigados - 1; i >= 0; i--) {
+        castigados[i].dias_treino--;
+        if (castigados[i].dias_treino <= 0) {
+            castigados[i].dias_treino = 0;
+            adicionarJogador(plantel, numJogadores, castigados[i]);
+            removerJogador(castigados, numCastigados, castigados[i]);
+        }
+    }
+
+    // ----- adicionar 2 jogadores às transferencias -----
+    int totalNomesTransf = 0;
+    string* nomesTransf = geraNomes("nomes.txt", totalNomesTransf);
+    string posicoes4[4] = {"GR", "DEF", "MED", "AVA"};
+
+    for (int k = 0; k < 2; k++) {
+        jogador novo;
+        novo.nome = nomesTransf[rand() % totalNomesTransf];
+        novo.pos = posicoes4[rand() % 4];
+        novo.num = rand() % 99 + 1;
+        novo.idade = rand() % 18 + 18;
+        novo.prob_lesao = rand() % 16;
+        novo.prob_castigo = rand() % 21;
+        novo.qualidade = rand() % 101;
+        novo.dias_treino = 0;
+
+        adicionarJogador(transferencias, numTransferencias, novo);
+    }
+    delete[] nomesTransf;
+
     cout << "*************************************************************************" << endl;
     numJornada++;
     system("pause");
     system("cls");
 
+    delete[] titulares;
+    delete[] suplentes;
+
     mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, false);
-    exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, false);
+    exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, jogosAdversario, false);
 }
 
-void treinarJogador(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios, bool aposJornada){
+void treinarJogador(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios, int* jogosAdversario,bool aposJornada){
     char opcTreino;
     system("cls");
     cout << "1-Mudar a posição de um jogador:" << endl;
@@ -348,7 +451,7 @@ void treinarJogador(jogador* plantel, int numJogadores, jogador* lesionados, int
     }
 }
 
-void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios, bool aposJornada) {
+void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios, int* jogosAdversario,bool aposJornada) {
     char opc;
 
     cout << "===========================================================================================" << endl;
@@ -358,16 +461,16 @@ void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int num
     switch (opc) {
         case 'S':
         case 's':
-            passarJornada(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
+            passarJornada(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, jogosAdversario);
             break;
 
         case 'O':
         case 'o':
-            treinarJogador(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, aposJornada);
+            treinarJogador(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, jogosAdversario,aposJornada);
             system("pause");
             system("cls");
             mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, aposJornada);
-            exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, aposJornada);
+            exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, jogosAdversario,aposJornada);
             break;
 
         default :
@@ -375,7 +478,7 @@ void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int num
             system("pause");
             system("cls");
             mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, aposJornada);
-            exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, aposJornada);
+            exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, jogosAdversario,aposJornada);
             break;
     }
 }
@@ -393,6 +496,7 @@ void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int num
 */
 
 void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, bool aposJornada) {
+    system("cls");
     if (!aposJornada) {
         cout << "************************************" << endl;
         cout << "* EDA FC - " << numJornada << "a Jornada - " << numPontos << " pontos. *" << endl;
@@ -428,6 +532,7 @@ void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int
              << " | " << setw(12)  << plantel[i].prob_castigo << "%"
              << " | " << setw(9)  << plantel[i].qualidade
              << " | " << plantel[i].dias_treino << endl;
+
     }
 
     cout << "-----------------------------------------------------------------------------------------------" << endl;
@@ -463,7 +568,9 @@ void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int
                  << " | " << setw(6)  << lesionados[i].idade
                  << " | " << setw(11)  << lesionados[i].prob_lesao << "%"
                  << " | " << setw(12)  << lesionados[i].prob_castigo << "%"
-                 << " | " << setw(9)  << lesionados[i].qualidade << endl;
+                 << " | " << setw(9)  << lesionados[i].qualidade
+                 << " | " << lesionados[i].dias_treino << endl;
+
         }
     }
     cout << "-----------------------------------------------------------------------------------------------" << endl;
@@ -499,7 +606,8 @@ void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int
                  << " | " << setw(6)  << castigados[i].idade
                  << " | " << setw(11)  << castigados[i].prob_lesao << "%"
                  << " | " << setw(12)  << castigados[i].prob_castigo << "%"
-                 << " | " << setw(9)  << castigados[i].qualidade << endl;
+                 << " | " << setw(9)  << castigados[i].qualidade
+                 << " | " << castigados[i].dias_treino<< endl;
         }
     }
     cout << "-----------------------------------------------------------------------------------------------" << endl;

@@ -20,13 +20,14 @@ int main() {
     jogador* transferencias = nullptr;
     int numAdversarios = 0;
     string* adversarios = geraNomes("equipas.txt", numAdversarios);
+    int jogosAdversario[50] = {0};
 
 
     //adicionarJogador(lesionados, numLesionados, plantel[0]);
     //removerJogador(plantel, numJogadoresSort, plantel[0]);
 
     mostrarPlantel(plantel, numJogadoresSort, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, false);
-    exibirMenu(plantel, numJogadoresSort, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, false);
+    exibirMenu(plantel, numJogadoresSort, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios,jogosAdversario, false);
 
     delete[] plantel;
     delete[] lesionados;
