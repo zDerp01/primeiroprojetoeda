@@ -157,231 +157,163 @@ void removerJogador(jogador* &lista, int &numJogadores, jogador jogadorRemovido)
     }
 }
 
-void passarJornada(jogador* &plantel, int &numJogadores, jogador* &lesionados, int &numLesionados, jogador* &castigados, int &numCastigados, jogador* &transferencias, int &numTransferencias, string* adversarios, int numAdversarios, int* jogosAdversario) {
+void passarJornada(jogador* &plantel, int &numJogadores, jogador* &lesionados, int &numLesionados, jogador* &castigados, int &numCastigados, jogador* &transferencias, int &numTransferencias, string* adversarios, int numAdversarios) {
     system("cls");
 
-    int totalGolos = rand() % 9;
-    int resultadoEquipaA = (totalGolos == 0) ? 0 : rand() % (totalGolos + 1); // Eda
-    int resultadoEquipaB = totalGolos - resultadoEquipaA;
-    int indiceAdversario = 0;
-    int jogosSorteado = 0;
-
-    do {
-        indiceAdversario = rand() % numAdversarios;
-        jogosSorteado = jogosAdversario[indiceAdversario];
-    } while (jogosSorteado >= 2);
-
-    jogosAdversario[indiceAdversario]++;
+    // Sorteia o adversário UMA VEZ para os dois jogos da jornada
+    int indiceAdversario = rand() % numAdversarios;
     string nomeAdversario = adversarios[indiceAdversario];
 
-    cout << "=====================================================" << endl;
-    cout << "            JORNADA " << numJornada << endl;
-    cout << "            EDA FC vs " << nomeAdversario << endl;
-    cout << "=====================================================" << endl;
+    // CICLO PARA FAZER DOIS JOGOS CONTRA A MESMA EQUIPA
+    for (int jogoNum = 1; jogoNum <= 2; jogoNum++) {
 
-    system("pause");
-    system("cls");
+        int totalGolos = rand() % 9;
+        int resultadoEquipaA = (totalGolos == 0) ? 0 : rand() % (totalGolos + 1); // Eda
+        int resultadoEquipaB = totalGolos - resultadoEquipaA;
 
-    jogador* titulares = new jogador[11];
-    jogador* suplentes = new jogador[6];
-    bool escolhido[100] = {false}; // array pa marcar quem já foi selecionado (assumindo max 100 jogadores)
+        cout << "=====================================================" << endl;
+        cout << "            JORNADA " << numJornada << " - JOGO " << jogoNum << "/2" << endl;
+        cout << "            EDA FC vs " << nomeAdversario << endl;
+        cout << "=====================================================" << endl;
 
-    string posicoes[4] = {"GR", "DEF", "MED", "AVA"};
-    int limiteTitulares[4] = {1, 4, 4, 2};
-    int locTitulares = 0;
+        system("pause");
+        system("cls");
 
-    // pa escolher os titulares
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < limiteTitulares[i]; j++) {
-            int maxQualidade = -1;
-            int ind = -1;
+        jogador* titulares = new jogador[11];
+        jogador* suplentes = new jogador[6];
+        bool escolhido[100] = {false}; // array pa marcar quem já foi selecionado (assumindo max 100 jogadores)
 
-            for (int k = 0; k < numJogadores; k++) {
-                if (!escolhido[k] && plantel[k].pos == posicoes[i] && plantel[k].qualidade > maxQualidade) {
-                    maxQualidade = plantel[k].qualidade;
-                    ind = k;
+        string posicoes[4] = {"GR", "DEF", "MED", "AVA"};
+        int limiteTitulares[4] = {1, 4, 4, 2};
+        int locTitulares = 0;
+
+        // pa escolher os titulares
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < limiteTitulares[i]; j++) {
+                int maxQualidade = -1;
+                int ind = -1;
+                for (int k = 0; k < numJogadores; k++) {
+                    if (!escolhido[k] && plantel[k].pos == posicoes[i] && plantel[k].qualidade > maxQualidade) {
+                        maxQualidade = plantel[k].qualidade;
+                        ind = k;
+                    }
                 }
-            }
-            if (ind != -1) {
-                titulares[locTitulares++] = plantel[ind];
-                escolhido[ind] = true;
+                if (ind != -1) {
+                    titulares[locTitulares++] = plantel[ind];
+                    escolhido[ind] = true;
+                }
             }
         }
-    }
 
-    // pa escolher suplentes
-    int limiteSuplentes[4] = {1, 2, 2, 1};
-    int locSuplentes = 0;
-
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < limiteSuplentes[i]; j++) {
-            int maxQualidade = -1;
-            int ind = -1;
-
-            for (int k = 0; k < numJogadores; k++) {
-                if (!escolhido[k] && plantel[k].pos == posicoes[i] && plantel[k].qualidade > maxQualidade) {
-                    maxQualidade = plantel[k].qualidade;
-                    ind = k;
+        // pa escolher suplentes
+        int limiteSuplentes[4] = {1, 2, 2, 1};
+        int locSuplentes = 0;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < limiteSuplentes[i]; j++) {
+                int maxQualidade = -1;
+                int ind = -1;
+                for (int k = 0; k < numJogadores; k++) {
+                    if (!escolhido[k] && plantel[k].pos == posicoes[i] && plantel[k].qualidade > maxQualidade) {
+                        maxQualidade = plantel[k].qualidade;
+                        ind = k;
+                    }
                 }
-            }
-            if (ind != -1) {
-                suplentes[locSuplentes++] = plantel[ind];
-                escolhido[ind] = true;
+                if (ind != -1) {
+                    suplentes[locSuplentes++] = plantel[ind];
+                    escolhido[ind] = true;
+                }
             }
         }
-    }
 
-    // ----- lesoes e substituicoes -----
-    int substituicoesFeitas = 0;
-    string substituicoesTexto[3];
+        // ----- lesoes e substituicoes -----
+        int substituicoesFeitas = 0;
+        string substituicoesTexto[3];
 
-    for (int i = 0; i < locTitulares; i++) {
-        if (rand() % 100 < titulares[i].prob_lesao) {
-            titulares[i].dias_treino = rand() % 10 + 1;
+        for (int i = 0; i < locTitulares; i++) {
+            if (rand() % 100 < titulares[i].prob_lesao) {
+                titulares[i].dias_treino = rand() % 10 + 1;
+                if (substituicoesFeitas < 3) {
+                    int idxSup = -1;
+                    for (int s = 0; s < locSuplentes; s++) {
+                        if (suplentes[s].pos == titulares[i].pos) { idxSup = s; break; }
+                    }
+                    if (idxSup == -1 && locSuplentes > 0) idxSup = 0;
 
-            if (substituicoesFeitas < 3) {
-                int idxSup = -1;
-                for (int s = 0; s < locSuplentes; s++) {
-                    if (suplentes[s].pos == titulares[i].pos) { idxSup = s; break; }
-                }
-                if (idxSup == -1 && locSuplentes > 0) idxSup = 0;
-
-                if (idxSup != -1) {
-                    substituicoesTexto[substituicoesFeitas++] = titulares[i].nome + " -> " + suplentes[idxSup].nome;
-                    jogador suplenteSelecionado = suplentes[idxSup];
-                    for (int s = idxSup; s < locSuplentes - 1; s++) suplentes[s] = suplentes[s + 1];
-                    locSuplentes--;
-                    adicionarJogador(lesionados, numLesionados, titulares[i]);
-                    removerJogador(plantel, numJogadores, titulares[i]);
-                    titulares[i] = suplenteSelecionado;
+                    if (idxSup != -1) {
+                        substituicoesTexto[substituicoesFeitas++] = titulares[i].nome + " -> " + suplentes[idxSup].nome;
+                        jogador suplenteSelecionado = suplentes[idxSup];
+                        for (int s = idxSup; s < locSuplentes - 1; s++) suplentes[s] = suplentes[s + 1];
+                        locSuplentes--;
+                        adicionarJogador(lesionados, numLesionados, titulares[i]);
+                        removerJogador(plantel, numJogadores, titulares[i]);
+                        titulares[i] = suplenteSelecionado;
+                    } else {
+                        adicionarJogador(lesionados, numLesionados, titulares[i]);
+                        removerJogador(plantel, numJogadores, titulares[i]);
+                    }
                 } else {
-                    cout << "AVISO: " << titulares[i].nome << " lesionou-se e nao ha suplentes disponiveis." << endl;
                     adicionarJogador(lesionados, numLesionados, titulares[i]);
                     removerJogador(plantel, numJogadores, titulares[i]);
                 }
-            } else {
-                cout << "AVISO: " << titulares[i].nome << " lesionou-se apos o limite de substituicoes." << endl;
-                adicionarJogador(lesionados, numLesionados, titulares[i]);
+            }
+        }
+
+        // ----- castigos -----
+        for (int i = 0; i < locTitulares; i++) {
+            if (rand() % 100 < titulares[i].prob_castigo) {
+                titulares[i].dias_treino = rand() % 10 + 1;
+                adicionarJogador(castigados, numCastigados, titulares[i]);
                 removerJogador(plantel, numJogadores, titulares[i]);
             }
         }
-    }
 
-    // ----- castigos -----
-    for (int i = 0; i < locTitulares; i++) {
-        if (rand() % 100 < titulares[i].prob_castigo) {
-            titulares[i].dias_treino = rand() % 10 + 1;
-            adicionarJogador(castigados, numCastigados, titulares[i]);
-            removerJogador(plantel, numJogadores, titulares[i]);
+        if (resultadoEquipaA == resultadoEquipaB) numPontos++;
+        else if (resultadoEquipaA > resultadoEquipaB) numPontos+=3;
+
+        cout << "************************************" << endl;
+        cout << "* EDA FC - JOGO " << jogoNum << " - " << numPontos << " pontos acumulados. *" << endl;
+        cout << "************************************" << endl;
+        cout << "Resultado : EDA FC:" << resultadoEquipaA << " - " << nomeAdversario << ":" << resultadoEquipaB << endl;
+
+        // --- TABELAS DETALHADAS ---
+        cout << "\n11 Inicial" << endl;
+        cout << left << setw(26) << "Nome" << " | " << setw(2)  << "Num" << " | " << setw(7)  << "Posicao" << " | " << setw(5)  << "Idade" << " | " << setw(9)  << "ProbLesao" << " | " << setw(11) << "ProbCastigo" << " | " << "Qualidade" << endl;
+        cout << "-----------------------------------------------------------------------------------------------" << endl;
+        for (int i = 0; i < locTitulares; i++) {
+            cout << left << setw(26) << titulares[i].nome << " | " << setw(2)  << titulares[i].num << " | " << setw(7)  << titulares[i].pos << " | " << setw(5)  << titulares[i].idade << " | " << setw(8)  << titulares[i].prob_lesao << "%" << " | " << setw(10) << titulares[i].prob_castigo << "%" << " | " << titulares[i].qualidade << endl;
+        }
+
+        cout << "\nCastigados:" << endl;
+        cout << left << setw(26) << "Nome" << " | " << setw(2) << "Num" << " | " << setw(7) << "Posicao" << " | " << setw(5) << "Idade" << " | " << setw(9) << "ProbLesao" << " | " << setw(11) << "ProbCastigo" << " | " << setw(9) << "Qualidade" << " | JogosCastigo" << endl;
+        cout << "--------------------------------------------------------------------------------------------------------------" << endl;
+        for (int i = 0; i < numCastigados; i++) {
+            cout << left << setw(26) << castigados[i].nome << " | " << setw(2) << castigados[i].num << " | " << setw(7) << castigados[i].pos << " | " << setw(5) << castigados[i].idade << " | " << setw(8) << castigados[i].prob_lesao << "%" << " | " << setw(10) << castigados[i].prob_castigo << "%" << " | " << setw(9) << castigados[i].qualidade << " | " << castigados[i].dias_treino << endl;
+        }
+
+        cout << "\nLesionados:" << endl;
+        cout << left << setw(26) << "Nome" << " | " << setw(2) << "Num" << " | " << setw(7) << "Posicao" << " | " << setw(5) << "Idade" << " | " << setw(9) << "ProbLesao" << " | " << setw(11) << "ProbCastigo" << " | " << setw(9) << "Qualidade" << " | JogosLesao" << endl;
+        cout << "--------------------------------------------------------------------------------------------------------------" << endl;
+        for (int i = 0; i < numLesionados; i++) {
+            cout << left << setw(26) << lesionados[i].nome << " | " << setw(2) << lesionados[i].num << " | " << setw(7) << lesionados[i].pos << " | " << setw(5) << lesionados[i].idade << " | " << setw(8) << lesionados[i].prob_lesao << "%" << " | " << setw(10) << lesionados[i].prob_castigo << "%" << " | " << setw(9) << lesionados[i].qualidade << " | " << lesionados[i].dias_treino << endl;
+        }
+
+        cout << "\nSubstituicoes:" << endl;
+        if (substituicoesFeitas == 0) cout << "Sem substituicoes neste jogo." << endl;
+        else {
+            for (int i = 0; i < substituicoesFeitas; i++) cout << "  " << substituicoesTexto[i] << endl;
+        }
+
+        delete[] titulares;
+        delete[] suplentes;
+
+        if (jogoNum == 1) {
+            cout << "\nFim do primeiro jogo." << endl;
+            system("pause");
+            system("cls");
         }
     }
 
-    // ------------------------------
-
-    if (resultadoEquipaA == resultadoEquipaB) numPontos++;
-    else if (resultadoEquipaA > resultadoEquipaB) numPontos+=3;
-
-    cout << "************************************" << endl;
-    cout << "* EDA FC - " << numJornada << "a Jornada - " << numPontos << " pontos. *" << endl;
-    cout << "************************************" << endl;
-
-    cout << "Resultado Anterior" << endl;
-    cout << "Resultado : EDA FC:" << resultadoEquipaA << " - " << nomeAdversario << ":" << resultadoEquipaB << endl;
-
-    cout << "\n11 Inicial" << endl;
-    cout << left << setw(26) << "Nome"
-         << " | " << setw(2)  << "Num"
-         << " | " << setw(7)  << "Posicao"
-         << " | " << setw(5)  << "Idade"
-         << " | " << setw(9)  << "ProbLesao"
-         << " | " << setw(11) << "ProbCastigo"
-         << " | " << "Qualidade" << endl;
-    cout << "-----------------------------------------------------------------------------------------------" << endl;
-
-    for (int i = 0; i < locTitulares; i++) {
-        cout << left << setw(26) << titulares[i].nome
-             << " | " << setw(2)  << titulares[i].num
-             << " | " << setw(7)  << titulares[i].pos
-             << " | " << setw(5)  << titulares[i].idade
-             << " | " << setw(8)  << titulares[i].prob_lesao << "%"
-             << " | " << setw(10) << titulares[i].prob_castigo << "%"
-             << " | " << titulares[i].qualidade << endl;
-    }
-
-    cout << "\nSuplentes:" << endl;
-    cout << left << setw(26) << "Nome"
-         << " | " << setw(2)  << "Num"
-         << " | " << setw(7)  << "Posicao"
-         << " | " << setw(5)  << "Idade"
-         << " | " << setw(9)  << "ProbLesao"
-         << " | " << setw(11) << "ProbCastigo"
-         << " | " << "Qualidade" << endl;
-    cout << "-----------------------------------------------------------------------------------------------" << endl;
-
-    for (int i = 0; i < locSuplentes; i++) {
-        cout << left << setw(26) << suplentes[i].nome
-             << " | " << setw(2)  << suplentes[i].num
-             << " | " << setw(7)  << suplentes[i].pos
-             << " | " << setw(5)  << suplentes[i].idade
-             << " | " << setw(8)  << suplentes[i].prob_lesao << "%"
-             << " | " << setw(10) << suplentes[i].prob_castigo << "%"
-             << " | " << suplentes[i].qualidade << endl;
-    }
-
-    cout << "\nCastigados:" << endl;
-    cout << left << setw(26) << "Nome"
-         << " | " << setw(2)  << "Num"
-         << " | " << setw(7)  << "Posicao"
-         << " | " << setw(5)  << "Idade"
-         << " | " << setw(9)  << "ProbLesao"
-         << " | " << setw(11) << "ProbCastigo"
-         << " | " << setw(9)  << "Qualidade"
-         << " | JogosCastigo" << endl;
-    cout << "--------------------------------------------------------------------------------------------------------------" << endl;
-
-    for (int i = 0; i < numCastigados; i++) {
-        cout << left << setw(26) << castigados[i].nome
-             << " | " << setw(2)  << castigados[i].num
-             << " | " << setw(7)  << castigados[i].pos
-             << " | " << setw(5)  << castigados[i].idade
-             << " | " << setw(8)  << castigados[i].prob_lesao << "%"
-             << " | " << setw(10) << castigados[i].prob_castigo << "%"
-             << " | " << setw(9)  << castigados[i].qualidade
-             << " | " << castigados[i].dias_treino << endl;
-    }
-
-    cout << "\nLesionados:" << endl;
-    cout << left << setw(26) << "Nome"
-         << " | " << setw(2)  << "Num"
-         << " | " << setw(7)  << "Posicao"
-         << " | " << setw(5)  << "Idade"
-         << " | " << setw(9)  << "ProbLesao"
-         << " | " << setw(11) << "ProbCastigo"
-         << " | " << setw(9)  << "Qualidade"
-         << " | JogosLesao" << endl;
-    cout << "--------------------------------------------------------------------------------------------------------------" << endl;
-
-    for (int i = 0; i < numLesionados; i++) {
-        cout << left << setw(26) << lesionados[i].nome
-             << " | " << setw(2)  << lesionados[i].num
-             << " | " << setw(7)  << lesionados[i].pos
-             << " | " << setw(5)  << lesionados[i].idade
-             << " | " << setw(8)  << lesionados[i].prob_lesao << "%"
-             << " | " << setw(10) << lesionados[i].prob_castigo << "%"
-             << " | " << setw(9)  << lesionados[i].qualidade
-             << " | " << lesionados[i].dias_treino << endl;
-    }
-
-    cout << "\nSubstituicoes:" << endl;
-    if (substituicoesFeitas == 0) {
-        cout << "Sem substituicoes nesta jornada." << endl;
-    } else {
-        for (int i = 0; i < substituicoesFeitas; i++) {
-            cout << "  " << substituicoesTexto[i] << endl;
-        }
-    }
-
-    // ----- decrementar contadores e devolver ao plantel -----
+    // ----- FINAL DA JORNADA (Processado após os 2 jogos) -----
     for (int i = numLesionados - 1; i >= 0; i--) {
         lesionados[i].dias_treino--;
         if (lesionados[i].dias_treino <= 0) {
@@ -400,39 +332,28 @@ void passarJornada(jogador* &plantel, int &numJogadores, jogador* &lesionados, i
         }
     }
 
-    // ----- adicionar 2 jogadores às transferencias -----
     int totalNomesTransf = 0;
     string* nomesTransf = geraNomes("nomes.txt", totalNomesTransf);
     string posicoes4[4] = {"GR", "DEF", "MED", "AVA"};
-
     for (int k = 0; k < 2; k++) {
         jogador novo;
-        novo.nome = nomesTransf[rand() % totalNomesTransf];
-        novo.pos = posicoes4[rand() % 4];
-        novo.num = rand() % 99 + 1;
-        novo.idade = rand() % 18 + 18;
-        novo.prob_lesao = rand() % 16;
-        novo.prob_castigo = rand() % 21;
-        novo.qualidade = rand() % 101;
-        novo.dias_treino = 0;
-
+        novo.nome = nomesTransf[rand() % totalNomesTransf]; novo.pos = posicoes4[rand() % 4];
+        novo.num = rand() % 99 + 1; novo.idade = rand() % 18 + 18;
+        novo.prob_lesao = rand() % 16; novo.prob_castigo = rand() % 21;
+        novo.qualidade = rand() % 101; novo.dias_treino = 0;
         adicionarJogador(transferencias, numTransferencias, novo);
     }
     delete[] nomesTransf;
 
-    cout << "*************************************************************************" << endl;
     numJornada++;
     system("pause");
     system("cls");
 
-    delete[] titulares;
-    delete[] suplentes;
-
     mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, false);
-    exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, jogosAdversario, false);
+    exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, false);
 }
 
-void treinarJogador(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios, int* jogosAdversario,bool aposJornada){
+void treinarJogador(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios,bool aposJornada){
     char opcTreino;
     system("cls");
     cout << "1-Mudar a posição de um jogador:" << endl;
@@ -451,7 +372,7 @@ void treinarJogador(jogador* plantel, int numJogadores, jogador* lesionados, int
     }
 }
 
-void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios, int* jogosAdversario,bool aposJornada) {
+void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios,bool aposJornada) {
     char opc;
 
     cout << "===========================================================================================" << endl;
@@ -461,16 +382,16 @@ void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int num
     switch (opc) {
         case 'S':
         case 's':
-            passarJornada(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, jogosAdversario);
+            passarJornada(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
             break;
 
         case 'O':
         case 'o':
-            treinarJogador(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, jogosAdversario,aposJornada);
+            treinarJogador(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios,aposJornada);
             system("pause");
             system("cls");
             mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, aposJornada);
-            exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, jogosAdversario,aposJornada);
+            exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios,aposJornada);
             break;
 
         default :
@@ -478,7 +399,7 @@ void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int num
             system("pause");
             system("cls");
             mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, aposJornada);
-            exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, jogosAdversario,aposJornada);
+            exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios,aposJornada);
             break;
     }
 }
