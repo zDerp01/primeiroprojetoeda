@@ -271,7 +271,7 @@ void passarJornada(jogador* &plantel, int &numJogadores, jogador* &lesionados, i
         else if (resultadoEquipaA > resultadoEquipaB) numPontos+=3;
 
         cout << "************************************" << endl;
-        cout << "* EDA FC - JOGO " << jogoNum << " - " << numPontos << " pontos acumulados. *" << endl;
+        cout << "* EDA FC - JOGO " << jogoNum << " - " << numPontos << " pontos. *" << endl;
         cout << "************************************" << endl;
         cout << "Resultado : EDA FC:" << resultadoEquipaA << " - " << nomeAdversario << ":" << resultadoEquipaB << endl;
 
@@ -353,24 +353,179 @@ void passarJornada(jogador* &plantel, int &numJogadores, jogador* &lesionados, i
     exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, false);
 }
 
-void treinarJogador(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios,bool aposJornada){
+/**
+* Função que gere as transferências de jogadores, verificando os limites maximos e mínimos do plantel.
+* Caso os limites sejam atingidos, obriga à troca de um jogador do plantel por um da lista de transferências.
+* @param plantel - o plantel atual.
+* @param numJogadores - numero de jogadores do plantel.
+* @param transferencias - a lista de transferencias.
+* @param numTransferencias - numero de jogadores nas transferencias.
+*/
+void transferir(jogador* &plantel, int &numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* &transferencias, int &numTransferencias, string* adversarios, int numAdversarios) {
+    if (numTransferencias == 0) {
+        cout << "\nNao ha jogadores na lista de transferencias" << endl;
+        system("pause");
+        exibirGestao(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
+    }
+    else {
+        system("cls");
+        cout << "********************* MERCADO DE TRANSFERENCIAS *********************" << endl;
+        for (int i = 0; i < numTransferencias; i++) {
+            cout << i + 1 << " - " << transferencias[i].nome
+                 << " | Pos: " << transferencias[i].pos
+                 << " | Qualidade: " << transferencias[i].qualidade
+                 << " | Idade: " << transferencias[i].idade << endl;
+        }
+        cout << "0 - Cancelar" << endl;
+        cout << "*********************************************************************" << endl;
+
+        int escolhaTransf;
+        cout << "Escolha o jogador a contratar (numero da lista): ";
+        cin >> escolhaTransf;
+
+        if (escolhaTransf <= 0 || escolhaTransf > numTransferencias) exibirGestao(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
+
+        jogador jogadorDesejado = transferencias[escolhaTransf - 1];
+
+        // contagem por posicao dos jogadores atuais ---
+        int countGR = 0, countDEF = 0, countMED = 0, countAVA = 0;
+        for (int i = 0; i < numJogadores; i++) {
+            if (plantel[i].pos == "GR") countGR++;
+            else if (plantel[i].pos == "DEF") countDEF++;
+            else if (plantel[i].pos == "MED") countMED++;
+            else if (plantel[i].pos == "AVA") countAVA++;
+        }
+
+        // confirmar os limites ----
+        bool limiteGeral = numJogadores >= 30;
+        bool limitePosicao = false;
+        if (jogadorDesejado.pos == "GR" && countGR >= 3) limitePosicao = true;
+        if (jogadorDesejado.pos == "DEF" && countDEF >= 10) limitePosicao = true;
+        if (jogadorDesejado.pos == "MED" && countMED >= 10) limitePosicao = true;
+        if (jogadorDesejado.pos == "AVA" && countAVA >= 7) limitePosicao = true;
+
+        if (limiteGeral || limitePosicao) {
+            cout << "\n[AVISO] Limite do plantel ou da posicao atingido!" << endl;
+            cout << "Para contratar este jogador, tera de fazer uma troca." << endl;
+            system("pause");
+
+            system("cls");
+            cout << "--- Escolhe um jogador para dispensar ---" << endl;
+            for (int i = 0; i < numJogadores; i++) {
+                cout << i + 1 << " - " << plantel[i].nome << " (" << plantel[i].pos << ")" << endl;
+            }
+
+            int opc;
+            cout << "Opcao: ";
+            cin >> opc;
+
+            if (opc <= 0 || opc > numJogadores) {
+                cout << "Transferencia cancelada." << endl;
+                system("pause");
+                exibirGestao(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
+            }
+
+            jogador jogadorSaindo = plantel[opc - 1];
+
+            // limites minimos ---
+            if (jogadorSaindo.pos != jogadorDesejado.pos) {
+                if (jogadorSaindo.pos == "GR" && countGR <= 2) { cout << "Erro: Minimo de GR e 2. Troca cancelada!" << endl; system("pause"); exibirGestao(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);; }
+                if (jogadorSaindo.pos == "DEF" && countDEF <= 7) { cout << "Erro: Minimo de DEF e 7. Troca cancelada!" << endl; system("pause"); exibirGestao(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);; }
+                if (jogadorSaindo.pos == "MED" && countMED <= 7) { cout << "Erro: Minimo de MED e 7. Troca cancelada!" << endl; system("pause"); exibirGestao(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);; }
+                if (jogadorSaindo.pos == "AVA" && countAVA <= 4) { cout << "Erro: Minimo de AVA e 4. Troca cancelada!" << endl; system("pause"); exibirGestao(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);; }
+            }
+
+            removerJogador(transferencias, numTransferencias, jogadorDesejado);
+            removerJogador(plantel, numJogadores, jogadorSaindo);
+
+            adicionarJogador(plantel, numJogadores, jogadorDesejado);
+            adicionarJogador(transferencias, numTransferencias, jogadorSaindo);
+
+            cout << "\nTroca realizada com sucesso: Sai " << jogadorSaindo.nome << " e entra " << jogadorDesejado.nome << "!" << endl;
+        } else {
+            removerJogador(transferencias, numTransferencias, jogadorDesejado);
+            adicionarJogador(plantel, numJogadores, jogadorDesejado);
+            cout << "\nTransferencia realizada com sucesso! " << jogadorDesejado.nome << " e o novo reforco do EDA FC." << endl;
+        }
+
+        system("pause");
+
+        mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, false);
+        exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios,false);
+    }
+}
+
+void treinarJogador(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias){
     char opcTreino;
     system("cls");
-    cout << "1-Mudar a posição de um jogador:" << endl;
-    cout << "2-Melhorar a qualidade de um jogador:" << endl;
+    cout << "\n***************************** Menu de Treino: *****************************" << endl;
+    cout << "1 - Mudar Posicao" << endl;
+    cout << "2 - Melhorar Qualidade" << endl;
+    cout << "\n***************************************************************************" << endl << ">>> ";
+    cin >> opcTreino;
     switch (opcTreino) {
         case '1':
-            mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, aposJornada);
+            mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, true);
             break;
 
         case '2':
             break;
 
         default :
-            cout <<"Comando inválido!";
+            cout << endl << "Operacao invalida!" << endl;
+            system("pause");
+            treinarJogador(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias);
             break;
     }
 }
+
+void exibirGestao(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios){
+    char opcTreino;
+    system("cls");
+    cout << "\n***************************** Menu de Gestao: *****************************" << endl;
+    cout << "1 - Treino Especifico" << endl;
+    cout << "2 - Transferencias" << endl;
+    cout << "3 - Alteracao Tatica" << endl;
+    cout << "4 - Gestao Fisica e Disciplinar" << endl;
+    cout << "5 - Gravar Equipa" << endl;
+    cout << "6 - Carregar Equipa" << endl;
+    cout << "0 - Voltar" << endl;
+    cout << "\n***************************************************************************" << endl << ">>> ";
+    cin >> opcTreino;
+    switch (opcTreino) {
+        case '1':
+            treinarJogador(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias);
+            break;
+
+        case '2':
+            transferir(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
+            break;
+
+        case '3':
+            break;
+
+        case '4':
+            break;
+
+        case '5':
+            break;
+
+        case '6':
+            break;
+
+        case '0':
+            mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, false);
+            exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios,false);
+            break;
+
+        default :
+            cout << endl << "Operacao invalida!" << endl;
+            system("pause");
+            exibirGestao(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
+            break;
+    }
+}
+
 
 void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios,bool aposJornada) {
     char opc;
@@ -387,11 +542,7 @@ void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int num
 
         case 'O':
         case 'o':
-            treinarJogador(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios,aposJornada);
-            system("pause");
-            system("cls");
-            mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, aposJornada);
-            exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios,aposJornada);
+            exibirGestao(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
             break;
 
         default :
