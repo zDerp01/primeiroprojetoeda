@@ -11,6 +11,35 @@ int numJornada=1, numPontos=0;
 int taticaAtual[4] = {1, 4, 4, 2};
 
 /**
+* Função auxiliar que atribui um valor numerico a cada posicao para facilitar a ordenacao.
+* @param pos - string que recebe uma posicao e retorna um numero que a identifica.
+*/
+int valorPosicao(string pos) {
+    if (pos == "GR") return 1;
+    if (pos == "DEF") return 2;
+    if (pos == "MED") return 3;
+    if (pos == "AVA") return 4;
+    return 5;
+}
+
+/**
+* Função que ordena o plantel pela sua posicao.
+* @param plantel - plantel.
+* @param numJogadores - numero de jogadores.
+*/
+void ordenarPorPosicao(jogador* plantel, int numJogadores) {
+    for (int i = 0; i < numJogadores - 1; i++) {
+        for (int j = 0; j < numJogadores - i - 1; j++) {
+            if (valorPosicao(plantel[j].pos) > valorPosicao(plantel[j + 1].pos)) {
+                jogador temp = plantel[j];
+                plantel[j] = plantel[j + 1];
+                plantel[j + 1] = temp;
+            }
+        }
+    }
+}
+
+/**
 * Função que recebe o nome de um ficheiro e referencia o totalNomes (para
 * assim alterar o argumento usado para esse total de nomes), que retorna a lista com todos os nomes do ficheiro.
 * @param nomeFicheiro - string nome do ficheiro.
@@ -121,6 +150,8 @@ void adicionarJogador(jogador* &lista, int &numJogadores, jogador novoJogador) {
 
     lista = novaLista;
     numJogadores++;
+
+    ordenarPorPosicao(lista, numJogadores);
 }
 
 /**
@@ -528,7 +559,6 @@ void gerirFisicaDisciplina(jogador* &plantel, int &numJogadores, jogador* &lesio
     cin >> opc;
 
     if (opc == '0') {
-        // Volta ao menu anterior
         exibirGestao(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
     }
     else if (opc == '1' || opc == '3') {
@@ -536,7 +566,8 @@ void gerirFisicaDisciplina(jogador* &plantel, int &numJogadores, jogador* &lesio
             cout << "O plantel esta vazio!" << endl;
             system("pause");
             gerirFisicaDisciplina(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
-        } else {
+        }
+        else {
             system("cls");
             cout << "--- Jogadores Disponiveis ---" << endl;
             for (int i = 0; i < numJogadores; i++) cout << i + 1 << " - " << plantel[i].nome << " (" << plantel[i].pos << ")" << endl;
@@ -548,7 +579,7 @@ void gerirFisicaDisciplina(jogador* &plantel, int &numJogadores, jogador* &lesio
                 cout << "Quantas jornadas de indisponibilidade (Max 10)? "; cin >> jornadas;
                 if (jornadas > 10) jornadas = 10;
 
-                jogador afetado = plantel[escolha - 1];
+                jogador afetado = plantel[escolha-1];
                 afetado.dias_treino = jornadas;
                 removerJogador(plantel, numJogadores, afetado);
 
