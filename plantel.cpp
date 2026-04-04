@@ -8,6 +8,7 @@
 using namespace std;
 
 int numJornada=1, numPontos=0;
+int taticaAtual[4] = {1, 4, 4, 2};
 
 /**
 * Função que recebe o nome de um ficheiro e referencia o totalNomes (para
@@ -184,7 +185,7 @@ void passarJornada(jogador* &plantel, int &numJogadores, jogador* &lesionados, i
         bool escolhido[100] = {false}; // array pa marcar quem já foi selecionado (assumindo max 100 jogadores)
 
         string posicoes[4] = {"GR", "DEF", "MED", "AVA"};
-        int limiteTitulares[4] = {1, 4, 4, 2};
+        int limiteTitulares[4] = {taticaAtual[0], taticaAtual[1], taticaAtual[2], taticaAtual[3]};
         int locTitulares = 0;
 
         // pa escolher os titulares
@@ -307,7 +308,6 @@ void passarJornada(jogador* &plantel, int &numJogadores, jogador* &lesionados, i
         delete[] suplentes;
 
         if (jogoNum == 1) {
-            cout << "\nFim do primeiro jogo." << endl;
             system("pause");
             system("cls");
         }
@@ -360,6 +360,12 @@ void passarJornada(jogador* &plantel, int &numJogadores, jogador* &lesionados, i
 * @param numJogadores - numero de jogadores do plantel.
 * @param transferencias - a lista de transferencias.
 * @param numTransferencias - numero de jogadores nas transferencias.
+* @param lesionados - a lista de lesionados.
+* @param numLesionados - numero de jogadores lesionados.
+* @param castigados - a lista de castigados.
+* @param numCastigados - numero de jogadores castigados.
+* @param adversarios - lista de adversarios.
+* @param numAdversarios - numero de jogadores adversario.
 */
 void transferir(jogador* &plantel, int &numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* &transferencias, int &numTransferencias, string* adversarios, int numAdversarios) {
     if (numTransferencias == 0) {
@@ -455,6 +461,176 @@ void transferir(jogador* &plantel, int &numJogadores, jogador* lesionados, int n
     }
 }
 
+/**
+* Função que permite alterar a tatica da equipa, validando os maximos e minimos.
+* @param plantel - o plantel atual.
+* @param numJogadores - numero de jogadores do plantel.
+* @param lesionados - a lista de lesionados.
+* @param numLesionados - numero de jogadores lesionados.
+* @param castigados - a lista de castigados.
+* @param numCastigados - numero de jogadores castigados.
+* @param transferencias - a lista de transferencias.
+* @param numTransferencias - numero de jogadores nas transferencias.
+* @param adversarios - lista de adversarios.
+* @param numAdversarios - numero de adversarios.
+*/
+void alterarTatica(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios) {
+    system("cls");
+    cout << "*********************** ALTERACAO TATICA ***********************" << endl;
+    cout << "Tatica atual: " << taticaAtual[0] << "-" << taticaAtual[1] << "-" << taticaAtual[2] << "-" << taticaAtual[3] << endl;
+    cout << "Regras: Total = 11 | Minimos: 1 GR, 3 DEF, 2 MED, 1 AVA" << endl;
+    cout << "****************************************************************" << endl;
+
+    int def, med, ava;
+    cout << "Numero de Defesas (Min 3): "; cin >> def;
+    cout << "Numero de Medios (Min 2): "; cin >> med;
+    cout << "Numero de Avancados (Min 1): "; cin >> ava;
+
+    if ((1 + def + med + ava == 11) && def >= 3 && med >= 2 && ava >= 1) {
+        taticaAtual[1] = def;
+        taticaAtual[2] = med;
+        taticaAtual[3] = ava;
+        cout << "\nTatica alterada com sucesso para 1-" << def << "-" << med << "-" << ava << "!" << endl;
+    }
+    else {
+        cout << "\nTatica Invalida! Nao cumpre o total de 11 jogadores ou os minimos exigidos." << endl;
+    }
+
+    system("pause");
+
+    mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, false);
+    exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, false);
+}
+
+/**
+* Função que permite aplicar ou reduzir lesões e castigos aos jogadores, movendo-os entre listas.
+* @param plantel - o plantel atual.
+* @param numJogadores - numero de jogadores do plantel.
+* @param lesionados - a lista de lesionados.
+* @param numLesionados - numero de jogadores lesionados.
+* @param castigados - a lista de castigados.
+* @param numCastigados - numero de jogadores castigados.
+* @param transferencias - a lista de transferencias.
+* @param numTransferencias - numero de jogadores nas transferencias.
+* @param adversarios - lista de adversarios.
+* @param numAdversarios - numero de adversarios.
+*/
+void gerirFisicaDisciplina(jogador* &plantel, int &numJogadores, jogador* &lesionados, int &numLesionados, jogador* &castigados, int &numCastigados, jogador* &transferencias, int &numTransferencias, string* adversarios, int numAdversarios) {
+    char opc;
+    system("cls");
+    cout << "****************** GESTAO FISICA E DISCIPLINAR *****************" << endl;
+    cout << "1 - Aplicar Lesao a um jogador do Plantel" << endl;
+    cout << "2 - Reduzir/Remover Lesao de um jogador" << endl;
+    cout << "3 - Aplicar Castigo a um jogador do Plantel" << endl;
+    cout << "4 - Reduzir/Remover Castigo de um jogador" << endl;
+    cout << "0 - Voltar" << endl;
+    cout << "****************************************************************" << endl << ">>> ";
+    cin >> opc;
+
+    if (opc == '0') {
+        // Volta ao menu anterior
+        exibirGestao(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
+    }
+    else if (opc == '1' || opc == '3') {
+        if (numJogadores == 0) {
+            cout << "O plantel esta vazio!" << endl;
+            system("pause");
+            gerirFisicaDisciplina(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
+        } else {
+            system("cls");
+            cout << "--- Jogadores Disponiveis ---" << endl;
+            for (int i = 0; i < numJogadores; i++) cout << i + 1 << " - " << plantel[i].nome << " (" << plantel[i].pos << ")" << endl;
+
+            int escolha, jornadas;
+            cout << "Escolha o jogador (numero): "; cin >> escolha;
+
+            if (escolha > 0 && escolha <= numJogadores) {
+                cout << "Quantas jornadas de indisponibilidade (Max 10)? "; cin >> jornadas;
+                if (jornadas > 10) jornadas = 10;
+
+                jogador afetado = plantel[escolha - 1];
+                afetado.dias_treino = jornadas;
+                removerJogador(plantel, numJogadores, afetado);
+
+                if (opc == '1') {
+                    adicionarJogador(lesionados, numLesionados, afetado);
+                    cout << "\n" << afetado.nome << " lesionou-se por " << jornadas << " jornadas!" << endl;
+                } else {
+                    adicionarJogador(castigados, numCastigados, afetado);
+                    cout << "\n" << afetado.nome << " foi suspenso por " << jornadas << " jornadas!" << endl;
+                }
+                system("pause");
+                gerirFisicaDisciplina(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
+            } else {
+                cout << "\nOpcao invalida!" << endl;
+                system("pause");
+                gerirFisicaDisciplina(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
+            }
+        }
+    }
+    else if (opc == '2' || opc == '4') {
+        bool isLesao = (opc == '2');
+        int qtdLista = isLesao ? numLesionados : numCastigados;
+        jogador* listaAlvo = isLesao ? lesionados : castigados;
+
+        if (qtdLista == 0) {
+            cout << "\nNao ha jogadores nesta lista!" << endl;
+            system("pause");
+            gerirFisicaDisciplina(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
+        }
+        else {
+            system("cls");
+            cout << "--- Jogadores Indisponiveis ---" << endl;
+            for (int i = 0; i < qtdLista; i++) cout << i + 1 << " - " << listaAlvo[i].nome << " (" << listaAlvo[i].pos << ") - Faltam " << listaAlvo[i].dias_treino << " jornadas" << endl;
+
+            int escolha, reducao;
+            cout << "Escolha o jogador (numero): "; cin >> escolha;
+
+            if (escolha > 0 && escolha <= qtdLista) {
+                cout << "Quantas jornadas pretende reduzir? "; cin >> reducao;
+
+                listaAlvo[escolha - 1].dias_treino -= reducao;
+
+                if (listaAlvo[escolha - 1].dias_treino <= 0) {
+                    jogador recuperado = listaAlvo[escolha - 1];
+                    recuperado.dias_treino = 0;
+
+                    if (isLesao) removerJogador(lesionados, numLesionados, recuperado);
+                    else removerJogador(castigados, numCastigados, recuperado);
+
+                    adicionarJogador(plantel, numJogadores, recuperado);
+                    cout << "\n" << recuperado.nome << " esta novamente apto e regressou ao plantel!" << endl;
+                } else {
+                    cout << "\nPena reduzida. Faltam " << listaAlvo[escolha - 1].dias_treino << " jornadas para o " << listaAlvo[escolha - 1].nome << " voltar." << endl;
+                }
+                system("pause");
+                gerirFisicaDisciplina(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
+            } else {
+                cout << "\nOpcao invalida!" << endl;
+                system("pause");
+                gerirFisicaDisciplina(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
+            }
+        }
+    }
+    else {
+        // Trata qualquer outra tecla solta que seja inserida
+        cout << "\nOpcao invalida!" << endl;
+        system("pause");
+        gerirFisicaDisciplina(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
+    }
+}
+
+/**
+* Função que mostra o menu de treino individual.
+* @param plantel - o plantel.
+* @param numJogadores - numero de jogadores do plantel.
+* @param lesionados - a lista de lesionados.
+* @param numLesionados - numero de jogadores lesionados.
+* @param castigados - a lista de castigados.
+* @param numCastigados - numero de jogadores castigados.
+* @param transferencias - a lista de transferencias.
+* @param numTransferencias - numero de jogadores nas transferencias.
+*/
 void treinarJogador(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias){
     char opcTreino;
     system("cls");
@@ -479,6 +655,19 @@ void treinarJogador(jogador* plantel, int numJogadores, jogador* lesionados, int
     }
 }
 
+/**
+* Função que mostra o menu de gestao de equipa.
+* @param plantel - o plantel.
+* @param numJogadores - numero de jogadores do plantel.
+* @param lesionados - a lista de lesionados.
+* @param numLesionados - numero de jogadores lesionados.
+* @param castigados - a lista de castigados.
+* @param numCastigados - numero de jogadores castigados.
+* @param transferencias - a lista de transferencias.
+* @param numTransferencias - numero de jogadores nas transferencias.
+* @param adversarios - lista de adversarios.
+* @param numAdversarios - numero de adversarios.
+*/
 void exibirGestao(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios){
     char opcTreino;
     system("cls");
@@ -502,9 +691,11 @@ void exibirGestao(jogador* plantel, int numJogadores, jogador* lesionados, int n
             break;
 
         case '3':
+            alterarTatica(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
             break;
 
         case '4':
+            gerirFisicaDisciplina(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
             break;
 
         case '5':

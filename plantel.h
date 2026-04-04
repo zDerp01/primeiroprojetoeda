@@ -22,6 +22,8 @@ string* geraNomes(string nomeFicheiro, int &totalNomes);
 jogador* gerarPlantel(int &totalNomes);
 void adicionarJogador(jogador* &lista, int &numJogadores, jogador novoJogador);
 void removerJogador(jogador* &lista, int &numJogadores, jogador jogadorRemovido);
+void alterarTatica(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios);
+void gerirFisicaDisciplina(jogador* &plantel, int &numJogadores, jogador* &lesionados, int &numLesionados, jogador* &castigados, int &numCastigados, jogador* &transferencias, int &numTransferencias, string* adversarios, int numAdversarios);
 void transferir(jogador* &plantel, int &numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* &transferencias, int &numTransferencias, string* adversarios, int numAdversarios);
 void passarJornada(jogador* &plantel, int &numJogadores, jogador* &lesionados, int &numLesionados, jogador* &castigados, int &numCastigados, jogador* &transferencias, int &numTransferencias, string* adversarios, int numAdversarios);
 void exibirGestao(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios);
