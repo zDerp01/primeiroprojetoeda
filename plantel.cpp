@@ -652,6 +652,113 @@ void gerirFisicaDisciplina(jogador* &plantel, int &numJogadores, jogador* &lesio
 }
 
 /**
+* Função que permite gravar o estado atual do EDA FC num ficheiro de texto.
+* Guarda a jornada, pontuação, tática e todos os jogadores (plantel, lesionados, castigados e transferências).
+* @param plantel - o plantel atual.
+* @param numJogadores - numero de jogadores do plantel.
+* @param lesionados - a lista de lesionados.
+* @param numLesionados - numero de jogadores lesionados.
+* @param castigados - a lista de castigados.
+* @param numCastigados - numero de jogadores castigados.
+* @param transferencias - a lista de transferencias.
+* @param numTransferencias - numero de jogadores nas transferencias.
+* @param adversarios - lista de adversarios.
+* @param numAdversarios - numero de adversarios.
+*/
+void gravarEquipa(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios) {
+    ofstream f("savegame.txt");
+
+    if (!f.is_open()) {
+        cout << "\n[ERRO] Nao foi possivel criar o ficheiro!" << endl;
+    } else {
+        // Grava variaveis globais e tatica
+        f << numJornada << " " << numPontos << endl;
+        f << taticaAtual[0] << " " << taticaAtual[1] << " " << taticaAtual[2] << " " << taticaAtual[3] << endl;
+
+        // Função para gravar cada lista (Plantel, Lesionados, etc.)
+        auto escreverLista = [&](jogador* lista, int qtd) {
+            f << qtd << endl;
+            for (int i = 0; i < qtd; i++) {
+                f << lista[i].nome << endl; // Nome sozinho para o getline apanhar bem
+                f << lista[i].pos << " " << lista[i].num << " " << lista[i].idade << " "
+                  << lista[i].prob_lesao << " " << lista[i].prob_castigo << " "
+                  << lista[i].qualidade << " " << lista[i].dias_treino << endl;
+            }
+        };
+
+        escreverLista(plantel, numJogadores);
+        escreverLista(lesionados, numLesionados);
+        escreverLista(castigados, numCastigados);
+        escreverLista(transferencias, numTransferencias);
+
+        f.close();
+        cout << "\n[SUCESSO] Jogo guardado!" << endl;
+    }
+    system("pause");
+    exibirGestao(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
+}
+
+/**
+* Função que permite carregar um estado do campeonato e do clube a partir de um ficheiro.
+* Esta funcionalidade apaga a simulação atual e substitui-a pelos dados lidos.
+* @param plantel - referencia para o plantel atual (será reinicializado).
+* @param numJogadores - referencia para o numero de jogadores (será atualizado).
+* @param lesionados - referencia para a lista de lesionados (será reinicializado).
+* @param numLesionados - referencia para o numero de lesionados (será atualizado).
+* @param castigados - referencia para a lista de castigados (será reinicializado).
+* @param numCastigados - referencia para o numero de castigados (será atualizado).
+* @param transferencias - referencia para a lista de transferencias (será reinicializado).
+* @param numTransferencias - referencia para o numero de transferencias (será atualizado).
+* @param adversarios - lista de adversarios.
+* @param numAdversarios - numero de adversarios.
+* @param nomeFicheiro - string com o caminho/nome do ficheiro a carregar.
+*/
+void carregarEquipa(jogador* &plantel, int &numJogadores, jogador* &lesionados, int &numLesionados, jogador* &castigados, int &numCastigados, jogador* &transferencias, int &numTransferencias, string* adversarios, int numAdversarios, string nomeFicheiro) {
+    ifstream f(nomeFicheiro);
+
+    if (!f.is_open()) {
+        cout << "\n[ERRO] O ficheiro nao existe!" << endl;
+        system("pause");
+    } else {
+        // Libertar memoria antiga
+        delete[] plantel; delete[] lesionados; delete[] castigados; delete[] transferencias;
+        plantel = nullptr; lesionados = nullptr; castigados = nullptr; transferencias = nullptr;
+
+        f >> numJornada >> numPontos;
+        f >> taticaAtual[0] >> taticaAtual[1] >> taticaAtual[2] >> taticaAtual[3];
+
+        auto lerLista = [&](jogador* &lista, int &qtd) {
+            f >> qtd;
+            if (qtd > 0) {
+                lista = new jogador[qtd];
+                for (int i = 0; i < qtd; i++) {
+                    f.ignore(); // Limpa o "Enter" da leitura anterior
+                    getline(f, lista[i].nome); // Le o nome completo
+
+                    // Le o resto dos dados normalmente
+                    f >> lista[i].pos >> lista[i].num >> lista[i].idade
+                      >> lista[i].prob_lesao >> lista[i].prob_castigo
+                      >> lista[i].qualidade >> lista[i].dias_treino;
+                }
+            } else {
+                lista = nullptr;
+            }
+        };
+
+        lerLista(plantel, numJogadores);
+        lerLista(lesionados, numLesionados);
+        lerLista(castigados, numCastigados);
+        lerLista(transferencias, numTransferencias);
+
+        f.close();
+        cout << "\n[SUCESSO] Jogo carregado!" << endl;
+        system("pause");
+    }
+    mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, false);
+    exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, false);
+}
+
+/**
 * Função que mostra o menu de treino individual.
 * @param plantel - o plantel.
 * @param numJogadores - numero de jogadores do plantel.
@@ -730,9 +837,11 @@ void exibirGestao(jogador* plantel, int numJogadores, jogador* lesionados, int n
             break;
 
         case '5':
+            gravarEquipa(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
             break;
 
         case '6':
+            carregarEquipa(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, "savegame.txt");
             break;
 
         case '0':
