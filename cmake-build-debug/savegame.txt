@@ -1,0 +1,58 @@
+2 3
+1 4 4 2
+19
+Mikkel Andersen
+GR 63 24 12 15 48 0
+Yacine Belkacem
+GR 45 19 7 10 77 0
+Tomas Del Rio
+GR 56 18 1 13 21 0
+Thierry Morel
+DEF 95 35 4 9 60 0
+Jonas Reinhardt
+DEF 26 25 10 12 59 0
+Adrien Lefort
+DEF 63 35 5 16 68 0
+Franco Maldini
+DEF 44 34 12 6 8 0
+Liam Harrington
+DEF 42 24 11 5 35 0
+Milan Kovacevic
+MED 95 28 10 2 82 0
+Nicolas Figueroa
+MED 55 28 2 17 6 0
+Lucas Andrade
+MED 5 20 8 8 57 0
+Luka Petrovic
+MED 10 34 12 1 5 0
+Bruno Henrique Vidal
+MED 82 24 9 6 60 0
+Karim Haddad
+MED 8 21 8 9 70 0
+Carlos Montalvo
+AVA 79 29 6 0 86 4
+Tomasz Zielinski
+AVA 82 19 9 19 5 0
+Mathieu Delacroix
+AVA 78 25 15 1 74 0
+Julian Santoro
+AVA 68 27 1 14 85 0
+Hugo Carrillo
+AVA 68 22 3 17 80 0
+2
+Boris Milenkovic
+DEF 56 21 15 12 89 8
+Noah Whitaker
+MED 50 29 14 6 94 7
+3
+Santiago 
+DEF 84 28 0 20 96 4
+Oliver Sterling
+DEF 42 35 1 17 74 1
+Omar Ben Salah
+DEF 83 30 2 12 38 4
+2
+Dominik Szabo
+DEF 35 28 0 6 19 0
+Andrei Ionescu
+DEF 95 33 10 18 18 0

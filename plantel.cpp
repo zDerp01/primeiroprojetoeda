@@ -23,7 +23,7 @@ int valorPosicao(string pos) {
 }
 
 /**
-* Função que ordena o plantel pela sua posicao.
+* Função que reordena o plantel pela sua posicao.
 * @param plantel - plantel.
 * @param numJogadores - numero de jogadores.
 */
@@ -342,6 +342,18 @@ void passarJornada(jogador* &plantel, int &numJogadores, jogador* &lesionados, i
             system("pause");
             system("cls");
         }
+        else {
+            // ----- treino -----
+            for (int i = 0; i < numJogadores; i++) {
+                if (plantel[i].dias_treino > 0) {
+                    plantel[i].dias_treino--;
+                    if (plantel[i].qualidade + 5 <= 100)
+                        plantel[i].qualidade += 5;
+                    else
+                        plantel[i].qualidade = 100;
+                }
+            }
+        }
     }
 
     // ----- FINAL DA JORNADA (Processado após os 2 jogos) -----
@@ -644,10 +656,27 @@ void gerirFisicaDisciplina(jogador* &plantel, int &numJogadores, jogador* &lesio
         }
     }
     else {
-        // Trata qualquer outra tecla solta que seja inserida
         cout << "\nOpcao invalida!" << endl;
         system("pause");
         gerirFisicaDisciplina(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
+    }
+}
+
+/**
+* Função auxiliar que permite escrever no ficheiro uma lista.
+* @param f - o ficheiro.
+* @param lista - a lista em questao.
+* @param qtd - a capacidade da lista.
+*/
+void escreverLista(ofstream &f, jogador* lista, int qtd) {
+    f << qtd << endl;
+    for (int i = 0; i < qtd; i++) {
+        jogador &j = lista[i];
+
+        f << j.nome << endl;
+        f << j.pos << " " << j.num << " " << j.idade << " "
+          << j.prob_lesao << " " << j.prob_castigo << " "
+          << j.qualidade << " " << j.dias_treino << endl;
     }
 }
 
@@ -669,27 +698,18 @@ void gravarEquipa(jogador* plantel, int numJogadores, jogador* lesionados, int n
     ofstream f("savegame.txt");
 
     if (!f.is_open()) {
-        cout << "\n[ERRO] Nao foi possivel criar o ficheiro!" << endl;
-    } else {
-        // Grava variaveis globais e tatica
+        cout << "\n[ERRO] Nao foi possivel criar o ficheiro" << endl;
+    }
+    else {
         f << numJornada << " " << numPontos << endl;
         f << taticaAtual[0] << " " << taticaAtual[1] << " " << taticaAtual[2] << " " << taticaAtual[3] << endl;
 
         // Função para gravar cada lista (Plantel, Lesionados, etc.)
-        auto escreverLista = [&](jogador* lista, int qtd) {
-            f << qtd << endl;
-            for (int i = 0; i < qtd; i++) {
-                f << lista[i].nome << endl; // Nome sozinho para o getline apanhar bem
-                f << lista[i].pos << " " << lista[i].num << " " << lista[i].idade << " "
-                  << lista[i].prob_lesao << " " << lista[i].prob_castigo << " "
-                  << lista[i].qualidade << " " << lista[i].dias_treino << endl;
-            }
-        };
 
-        escreverLista(plantel, numJogadores);
-        escreverLista(lesionados, numLesionados);
-        escreverLista(castigados, numCastigados);
-        escreverLista(transferencias, numTransferencias);
+        escreverLista(f, plantel, numJogadores);
+        escreverLista(f, lesionados, numLesionados);
+        escreverLista(f, castigados, numCastigados);
+        escreverLista(f, transferencias, numTransferencias);
 
         f.close();
         cout << "\n[SUCESSO] Jogo guardado!" << endl;
@@ -699,8 +719,34 @@ void gravarEquipa(jogador* plantel, int numJogadores, jogador* lesionados, int n
 }
 
 /**
+* Função auxiliar que permite ler no ficheiro uma lista.
+* @param f - o ficheiro.
+* @param lista - a lista em questao.
+* @param qtd - a capacidade da lista.
+*/
+void lerLista(ifstream &f, jogador* &lista, int &qtd) {
+    f >> qtd;
+    if (qtd > 0) {
+        lista = new jogador[qtd];
+        for (int i = 0; i < qtd; i++) {
+            f.ignore();
+
+            jogador &j = lista[i];
+
+            getline(f, j.nome);
+
+            f >> j.pos >> j.num >> j.idade
+              >> j.prob_lesao >> j.prob_castigo
+              >> j.qualidade >> j.dias_treino;
+        }
+    }
+    else {
+        lista = nullptr;
+    }
+}
+
+/**
 * Função que permite carregar um estado do campeonato e do clube a partir de um ficheiro.
-* Esta funcionalidade apaga a simulação atual e substitui-a pelos dados lidos.
 * @param plantel - referencia para o plantel atual (será reinicializado).
 * @param numJogadores - referencia para o numero de jogadores (será atualizado).
 * @param lesionados - referencia para a lista de lesionados (será reinicializado).
@@ -720,35 +766,18 @@ void carregarEquipa(jogador* &plantel, int &numJogadores, jogador* &lesionados, 
         cout << "\n[ERRO] O ficheiro nao existe!" << endl;
         system("pause");
     } else {
-        // Libertar memoria antiga
-        delete[] plantel; delete[] lesionados; delete[] castigados; delete[] transferencias;
-        plantel = nullptr; lesionados = nullptr; castigados = nullptr; transferencias = nullptr;
+        delete[] plantel;
+        delete[] lesionados;
+        delete[] castigados;
+        delete[] transferencias;
 
         f >> numJornada >> numPontos;
         f >> taticaAtual[0] >> taticaAtual[1] >> taticaAtual[2] >> taticaAtual[3];
 
-        auto lerLista = [&](jogador* &lista, int &qtd) {
-            f >> qtd;
-            if (qtd > 0) {
-                lista = new jogador[qtd];
-                for (int i = 0; i < qtd; i++) {
-                    f.ignore(); // Limpa o "Enter" da leitura anterior
-                    getline(f, lista[i].nome); // Le o nome completo
-
-                    // Le o resto dos dados normalmente
-                    f >> lista[i].pos >> lista[i].num >> lista[i].idade
-                      >> lista[i].prob_lesao >> lista[i].prob_castigo
-                      >> lista[i].qualidade >> lista[i].dias_treino;
-                }
-            } else {
-                lista = nullptr;
-            }
-        };
-
-        lerLista(plantel, numJogadores);
-        lerLista(lesionados, numLesionados);
-        lerLista(castigados, numCastigados);
-        lerLista(transferencias, numTransferencias);
+        lerLista(f, plantel, numJogadores);
+        lerLista(f, lesionados, numLesionados);
+        lerLista(f, castigados, numCastigados);
+        lerLista(f, transferencias, numTransferencias);
 
         f.close();
         cout << "\n[SUCESSO] Jogo carregado!" << endl;
@@ -756,6 +785,114 @@ void carregarEquipa(jogador* &plantel, int &numJogadores, jogador* &lesionados, 
     }
     mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, false);
     exibirMenu(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios, false);
+}
+
+/**
+* Função que permite mudar a posicao de um jogador confirmando todos os limites das mesmas.
+* @param plantel - referencia para o plantel atual (será reinicializado).
+* @param numJogadores - referencia para o numero de jogadores (será atualizado).
+* @param lesionados - referencia para a lista de lesionados (será reinicializado).
+* @param numLesionados - referencia para o numero de lesionados (será atualizado).
+* @param castigados - referencia para a lista de castigados (será reinicializado).
+* @param numCastigados - referencia para o numero de castigados (será atualizado).
+* @param transferencias - referencia para a lista de transferencias (será reinicializado).
+* @param numTransferencias - referencia para o numero de transferencias (será atualizado).
+* @param adversarios - lista de adversarios.
+* @param numAdversarios - numero de adversarios.
+*/
+void mudarPos(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios) {
+    system("cls");
+    cout << "Jogadores disponíveis:" << endl;
+    cout << "----------------------" << endl;
+    for (int i = 0; i < numJogadores; i++) {
+        cout << i + 1 << ". " << plantel[i].nome << " (" << plantel[i].pos << ")" << endl;
+    }
+
+    int escolha;
+    cout << "\nIntroduza o numero do jogador: ";
+    cin >> escolha;
+
+    if (escolha < 1 || escolha > numJogadores) {
+        cout << "Numero invalido!" << endl;
+        system("pause");
+        treinarJogador(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
+    }
+
+    string novaPosicao;
+    cout << "Introduza a nova posicao (GR, DEF, MED, AVA): ";
+    cin >> novaPosicao;
+
+    if (novaPosicao != "GR" && novaPosicao != "DEF" && novaPosicao != "MED" && novaPosicao != "AVA") {
+        cout << "Posicao invalida!" << endl;
+        system("pause");
+        treinarJogador(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
+    }
+
+    int contPos = 0;
+    for (int i = 0; i < numJogadores; i++) {
+        if (plantel[i].pos == novaPosicao) contPos++;
+    }
+
+    int maxPos = 0;
+    if (novaPosicao == "GR")  maxPos = 3;
+    else if (novaPosicao == "DEF") maxPos = 10;
+    else if (novaPosicao == "MED") maxPos = 10;
+    else if (novaPosicao == "AVA") maxPos = 7;
+
+    if (contPos >= maxPos) {
+        cout << "Capacidade insuficiente para essa posicao!" << endl;
+        system("pause");
+        treinarJogador(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
+    }
+
+    plantel[escolha - 1].pos = novaPosicao;
+    ordenarPorPosicao(plantel, numJogadores);
+    cout << "Posicao alterada com sucesso!" << endl;
+    system("pause");
+    treinarJogador(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
+}
+
+void melhorarQualidade(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios) {
+    system("cls");
+    cout << "Jogadores disponíveis:" << endl;
+    cout << "----------------------" << endl;
+    for (int i = 0; i < numJogadores; i++) {
+        cout << i + 1 << ". " << plantel[i].nome << " (" << plantel[i].pos << ")" << endl;
+    }
+
+    int escolha;
+    cout << "\nIntroduza o numero do jogador: ";
+    cin >> escolha;
+
+    if (escolha < 1 || escolha > numJogadores) {
+        cout << "Numero invalido!" << endl;
+        system("pause");
+        treinarJogador(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
+    }
+
+    bool estaLesionado = false;
+    for (int i = 0; i < numLesionados; i++) {
+        if (lesionados[i].nome == plantel[escolha - 1].nome && lesionados[i].num == plantel[escolha - 1].num) {
+            cout << "Jogador lesionado nao pode treinar" << endl;
+            system("pause");
+            treinarJogador(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
+        }
+    }
+
+    int semanas;
+    cout << "Introduza o numero de semanas de treino (1-5): ";
+    cin >> semanas;
+
+    if (semanas < 1 || semanas > 5) {
+        cout << "Numero de semanas invalido" << endl;
+        system("pause");
+        treinarJogador(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
+    }
+
+    plantel[escolha - 1].dias_treino = semanas;
+    cout << plantel[escolha - 1].nome << " vai treinar durante " << semanas << " jornada(s)!" << endl;
+    system("pause");
+    treinarJogador(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
 }
 
 /**
@@ -769,26 +906,32 @@ void carregarEquipa(jogador* &plantel, int &numJogadores, jogador* &lesionados, 
 * @param transferencias - a lista de transferencias.
 * @param numTransferencias - numero de jogadores nas transferencias.
 */
-void treinarJogador(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias){
+void treinarJogador(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios){
     char opcTreino;
     system("cls");
     cout << "\n***************************** Menu de Treino: *****************************" << endl;
     cout << "1 - Mudar Posicao" << endl;
     cout << "2 - Melhorar Qualidade" << endl;
+    cout << "0 - Voltar" << endl;
     cout << "\n***************************************************************************" << endl << ">>> ";
     cin >> opcTreino;
     switch (opcTreino) {
         case '1':
-            mostrarPlantel(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, true);
+            mudarPos(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
             break;
 
         case '2':
+            melhorarQualidade(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
+            break;
+
+        case '0':
+            exibirGestao(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
             break;
 
         default :
             cout << endl << "Operacao invalida!" << endl;
             system("pause");
-            treinarJogador(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias);
+            treinarJogador(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
             break;
     }
 }
@@ -821,7 +964,7 @@ void exibirGestao(jogador* plantel, int numJogadores, jogador* lesionados, int n
     cin >> opcTreino;
     switch (opcTreino) {
         case '1':
-            treinarJogador(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias);
+            treinarJogador(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
             break;
 
         case '2':
