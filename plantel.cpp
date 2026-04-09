@@ -189,10 +189,24 @@ void removerJogador(jogador* &lista, int &numJogadores, jogador jogadorRemovido)
     }
 }
 
+/**
+* Função que avança as jornadas e apresenta o resultado dos jogos.
+* Esta função calcula tudo o que é necessário para a realização dos 2 jogos (resultados / adversário / titulares e suplentes)
+* Afeta também o plantel através de lesões, substituições e castigos.
+* @param plantel - o plantel.
+* @param numJogadores - numero de jogadores do plantel.
+* @param lesionados - a lista de lesionados.
+* @param numLesionados - numero de jogadores lesionados.
+* @param castigados - a lista de castigados.
+* @param numCastigados - numero de jogadores castigados.
+* @param transferencias - a lista de transferencias.
+* @param numTransferencias - numero de jogadores nas transferencias.
+* @param adversarios - lista de adversarios.
+* @param numAdversarios - numero de adversarios.
+*/
 void passarJornada(jogador* &plantel, int &numJogadores, jogador* &lesionados, int &numLesionados, jogador* &castigados, int &numCastigados, jogador* &transferencias, int &numTransferencias, string* adversarios, int numAdversarios) {
     system("cls");
 
-    // Sorteia o adversário UMA VEZ para os dois jogos da jornada
     int indiceAdversario = rand() % numAdversarios;
     string nomeAdversario = adversarios[indiceAdversario];
 
@@ -356,7 +370,7 @@ void passarJornada(jogador* &plantel, int &numJogadores, jogador* &lesionados, i
         }
     }
 
-    // ----- FINAL DA JORNADA (Processado após os 2 jogos) -----
+    // ----- dps de 2 jogos -----
     for (int i = numLesionados - 1; i >= 0; i--) {
         lesionados[i].dias_treino--;
         if (lesionados[i].dias_treino <= 0) {
@@ -852,6 +866,19 @@ void mudarPos(jogador* plantel, int numJogadores, jogador* lesionados, int numLe
     treinarJogador(plantel, numJogadores, lesionados, numLesionados, castigados, numCastigados, transferencias, numTransferencias, adversarios, numAdversarios);
 }
 
+/**
+* Função que coloca um jogador em treino, melhorando a sua qualidade ao longo das jornadas.
+* @param plantel - o plantel.
+* @param numJogadores - numero de jogadores do plantel.
+* @param lesionados - a lista de lesionados.
+* @param numLesionados - numero de jogadores lesionados.
+* @param castigados - a lista de castigados.
+* @param numCastigados - numero de jogadores castigados.
+* @param transferencias - a lista de transferencias.
+* @param numTransferencias - numero de jogadores nas transferencias.
+* @param adversarios - lista de adversarios.
+* @param numAdversarios - numero de adversarios.
+*/
 void melhorarQualidade(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios) {
     system("cls");
     cout << "Jogadores disponíveis:" << endl;
@@ -1000,7 +1027,20 @@ void exibirGestao(jogador* plantel, int numJogadores, jogador* lesionados, int n
     }
 }
 
-
+/**
+* Função que exibe as opcoes disponiveis e lê o que o utilizador meter.
+* @param plantel - o plantel.
+* @param numJogadores - numero de jogadores do plantel.
+* @param lesionados - a lista de lesionados.
+* @param numLesionados - numero de jogadores lesionados.
+* @param castigados - a lista de castigados.
+* @param numCastigados - numero de jogadores castigados.
+* @param transferencias - a lista de transferencias.
+* @param numTransferencias - numero de jogadores nas transferencias.
+* @param adversarios - a lista de adversarios.
+* @param numAdversarios - numero de equipas adversarias.
+* @param aposJornada - booleano que influencia na exibicao do metodo mostrarPlantel.
+*/
 void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, string* adversarios, int numAdversarios,bool aposJornada) {
     char opc;
 
@@ -1039,8 +1079,8 @@ void exibirMenu(jogador* plantel, int numJogadores, jogador* lesionados, int num
 * @param numCastigados - numero de jogadores castigados.
 * @param transferencias - a lista de transferencias.
 * @param numTransferencias - numero de jogadores nas transferencias.
+* @param aposJornada - booleano que influencia na exibicao.
 */
-
 void mostrarPlantel(jogador* plantel, int numJogadores, jogador* lesionados, int numLesionados, jogador* castigados, int numCastigados, jogador* transferencias, int numTransferencias, bool aposJornada) {
     system("cls");
     if (!aposJornada) {

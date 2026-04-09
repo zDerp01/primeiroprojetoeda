@@ -14,10 +14,6 @@ struct jogador {
     int qualidade;
 };
 
-struct equipa {
-    string nome;
-};
-
 string* geraNomes(string nomeFicheiro, int &totalNomes);
 jogador* gerarPlantel(int &totalNomes);
 int valorPosicao(string pos);
